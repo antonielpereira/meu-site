@@ -10,5 +10,5 @@ about:
       href: https://github.com/antonielpereira
 ---
 
-relatório de aulas da disciplina de FIP 606
+Site organizado por Antoniel Pereira
 ---
