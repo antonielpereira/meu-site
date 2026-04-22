@@ -1,6 +1,6 @@
 ---
 title: "Aulas da disciplina FIP 606 - ANÁLISE E VISUALIZAÇÃO DE DADOS EM FITOPATOLOGIA"
-subtitle: "Organização das aulas em site"
+subtitle: "Organização das aulas para apresentação em website"
 image: capa-website.png # Se tiver uma foto na pasta
 about:
   template: jolla # Modelos: jolla, trestles, solana, marquee

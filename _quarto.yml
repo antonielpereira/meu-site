@@ -22,9 +22,7 @@ website:
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: lux  # Teste mudar para flatly ou materia
     css: styles.css
     toc: true
 
