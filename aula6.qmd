@@ -1,0 +1,212 @@
+---
+title: "Aula 06 - Análise Fitopatológica: Eficácia de Fungicidas e Produtividade"
+author: "Antoniel Pereira"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    code-fold: show
+execute:
+  warning: false
+  message: false
+---
+
+## Introdução
+
+Este documento apresenta a análise estatística de experimentos fitopatológicos, abrangendo desde ensaios em vasos (avaliação de severidade e interação entre doses) até ensaios de campo (blocos ao acaso) e correlações epidemiológicas.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(readxl)
+library(tidyverse)
+library(ggthemes)
+library(ggpubr)
+library(DHARMa)
+library(emmeans)
+library(multcomp)
+library(multcompView)
+```
+
+---
+
+## 1. Ensaio em Vaso: Fungicidas e Doses
+
+Nesta etapa, carregamos os dados e calculamos a incidência. O objetivo é entender como diferentes tratamentos e doses de fungicida afetam a severidade da doença.
+
+### Carregamento e Preparação
+
+```{r}
+#| label: dados-vaso
+
+fungicidas <- read_excel("dados_diversos.xlsx", "fungicida_vaso")
+
+fungicidas2 <- fungicidas |>
+  mutate(incidencia = inf_seeds / n_seeds,
+         dose = factor(dose))
+
+glimpse(fungicidas2)
+```
+
+### Exploração Visual: Interação entre Fatores
+
+Antes de rodar a ANOVA, visualizamos como a severidade se comporta em cada tratamento dentro de cada dose.
+
+```{r}
+#| label: fig-interacao
+#| fig-cap: "Severidade da doença por tratamento e dose."
+
+fungicidas2 |>
+  ggplot(aes(treat, severity, color = dose)) +
+  geom_jitter(width = 0.1, alpha = 0.6) +
+  facet_wrap(~ dose) +
+  scale_color_colorblind() +
+  theme_minimal() +
+  labs(x = "Tratamento", y = "Severidade", color = "Dose")
+```
+
+### Análise Estatística (ANOVA Fatorial)
+
+Verificamos os efeitos principais e, crucialmente, a **interação** entre Tratamento e Dose.
+
+```{r}
+#| label: anova-fatorial
+
+# Modelo com interação (Tratamento * Dose)
+m3 <- lm(severity ~ treat * dose, data = fungicidas2)
+
+# Diagnóstico de resíduos
+plot(simulateResiduals(m3))
+
+# Tabela de ANOVA
+anova(m3)
+```
+
+> **Nota:** Se a interação for significativa (p < 0.05), devemos analisar o efeito de tratamentos dentro de cada dose separadamente.
+
+
+
+### Comparação de Médias (Post-hoc)
+
+```{r}
+#| label: comparacao-vaso
+
+medias_m3 <- emmeans(m3, ~ treat | dose)
+cld(medias_m3, Letters = LETTERS)
+```
+
+---
+
+## 2. Ensaio de Campo: Produtividade (DBC)
+
+No campo, o delineamento costuma ser em Blocos Completos Casualizados (DBC) para controlar a heterogeneidade do solo.
+
+### Organização dos Dados
+
+```{r}
+#| label: dados-campo
+
+campo <- read_excel("dados_diversos.xlsx", "fungicida_campo")
+
+campo2 <- campo |>
+  mutate(trat = factor(TRAT),
+         bloco = factor(BLOCO)) |>
+  dplyr::select(trat, bloco, PROD) |>
+  rename(prod = PROD)
+```
+
+### Modelo de Blocos e Médias Ajustadas
+
+Ajustamos o modelo incluindo o efeito de `bloco`. Em seguida, extraímos as letras do teste de Tukey para o gráfico final.
+
+```{r}
+#| label: modelo-campo
+
+m_bloco <- lm(prod ~ trat + bloco, data = campo2)
+
+# ANOVA e Diagnóstico
+anova(m_bloco)
+plot(simulateResiduals(m_bloco))
+
+# Médias e Letras
+medias_m_bloco <- emmeans(m_bloco, ~ trat)
+res_cld <- cld(medias_m_bloco, Letters = LETTERS) |> as.data.frame()
+```
+
+### Gráfico de Resultados Finais
+
+```{r}
+#| label: fig-produtividade
+#| fig-cap: "Produtividade média ajustada por tratamento fungicida."
+
+campo2 |>
+  ggplot(aes(x = trat, y = prod)) +
+  geom_jitter(width = 0.05, alpha = 0.3, color = "gray40") +
+  geom_point(data = res_cld, aes(y = emmean), color = "red", size = 3) +
+  geom_errorbar(data = res_cld, 
+                aes(y = emmean, ymin = lower.CL, ymax = upper.CL), 
+                width = 0.1, color = "red") +
+  geom_text(data = res_cld, 
+            aes(y = upper.CL, label = .group), 
+            vjust = -1.2, size = 4, fontface = "bold") +
+  scale_y_continuous(limits = c(1500, 7500), breaks = seq(1500, 7500, 1000)) +
+  theme_classic() +
+  labs(
+    x = "Tratamento fungicida",
+    y = "Produtividade (Kg/ha)",
+    title = "Produtividade por Tratamento no Campo",
+    subtitle = "Barras representam o Intervalo de Confiança (95%)"
+  )
+```
+
+---
+
+## 3. Análise de Correlação: Incidência x Escleródios
+
+Aqui avaliamos a relação entre a incidência da doença e a produção de estruturas de resistência (escleródios), separando por estudos para evitar o **Paradoxo de Simpson**.
+
+### Visualização com Coeficiente de Correlação
+
+```{r}
+#| label: fig-correlacao
+#| fig-cap: "Relação entre incidência e escleródios por estudo."
+
+mofo <- read_excel("dados_diversos.xlsx", "mofo")
+
+mofo |>
+  ggplot(aes(inc, yld)) +
+  geom_point(aes(color = factor(study)), alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", linewidth = 0.8) + 
+  stat_cor(method = "pearson", label.x = 3, color = "red", fontface = "bold") +
+  facet_wrap(~ study) +
+  scale_color_colorblind() +
+  theme_light() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Incidência (%)",
+    y = "Produtividade (yld)",
+    title = "Análise de Correlação por Local/Estudo"
+  )
+```
+
+
+
+### Exploração das Distribuições
+
+É importante verificar a normalidade das variáveis antes de realizar testes de correlação paramétricos.
+
+```{r}
+#| label: histogramas
+#| layout-nrow: 1
+
+hist(mofo$yld, main = "Produtividade", col = "skyblue")
+hist(mofo$inc, main = "Incidência", col = "salmon")
+hist(log(mofo$scl + 1), main = "Log(Escleródios)", col = "lightgreen")
+```
+
+---
+
+> **Conclusão:** O fluxo de análise demonstra que a eficácia do fungicida pode depender da dose (interação) e que a produtividade no campo deve ser analisada considerando o efeito de blocos para reduzir o erro residual. A análise de correlação estratificada por estudo previne conclusões errôneas baseadas em dados agregados.

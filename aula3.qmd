@@ -1,0 +1,219 @@
+---
+title: "Aula 03"
+author: "Antoniel Pereira"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    code-fold: show
+execute:
+  warning: false
+  message: false
+---
+
+## 1. Importação e Preparação dos Dados
+
+Nesta fase inicial, carregamos as bibliotecas essenciais e importamos os dados brutos. O uso do `tidyverse` é fundamental, pois ele engloba pacotes como `readr` (leitura), `dplyr` (manipulação) e `ggplot2` (gráficos).
+
+### 1.1. Carregar pacotes e Importar Arquivos
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(readxl)   # Para ler arquivos Excel
+library(rstatix)  # Para testes estatísticos formatados
+library(plotly)   # Para gráficos interativos
+
+# Lendo os arquivos CSV de cada ano
+d22 <- read_csv("experiment_2022.csv")
+d23 <- read_csv("experiment_2023.csv")
+d24 <- read_csv("experiment_2024.csv")
+```
+
+### 1.2. Padronização e Renomeação
+
+Os dados de anos diferentes raramente vêm com nomes de colunas idênticos. Usamos `rename()` para padronizar as variáveis. O operador `|>` (pipe) passa o resultado de uma linha para a seguinte, facilitando a leitura.
+
+```{r}
+# Padronizando dados de 2022
+d22_renomeado <- d22 %>%
+  rename(
+    Year  = year,
+    site  = location,
+    cult  = cultivar,
+    rep   = block,
+    trt   = treatment,
+    sev   = severity,
+    yield = yield_kg_ha
+  )
+
+# Padronizando dados de 2023 (supondo nomes originais diferentes)
+d23_renomeado <- d23 %>%
+  rename(
+    Year  = Year,
+    site  = site,
+    cult  = cult,
+    rep   = rep,
+    trt   = trt,
+    sev   = sev,
+    yield = yield
+  )
+
+# Padronizando dados de 2024 e criando a coluna Year que faltava
+d24_renomeado <- d24 |>
+  mutate(Year = 2024) |>
+  rename(
+    site  = location,
+    cult  = cultivar,
+    rep   = block,
+    trt   = treatment,
+    sev   = severity_pct,
+    yield = yield_kg_ha
+  ) |>
+  select(Year, 1:6) # Organiza Year na primeira coluna
+```
+
+### 1.3. União das Bases e Georeferenciamento
+
+Utilizamos `rbind()` para empilhar as tabelas anuais em um único objeto chamado `d_all`. Em seguida, limpamos os nomes dos tratamentos e cidades com `recode()` para garantir consistência.
+
+```{r}
+# Unindo os três anos
+d_all <- rbind(d22_renomeado, d23_renomeado, d24_renomeado)
+
+# Recodificando variáveis categóricas
+d_all <- d_all |>
+  mutate(
+    trt = recode(trt, "ctrl" = "Control", "fung" = "Fungicide"),
+    site = recode(site, "Viçosa" = "Vicosa", "Uberlândia" = "Uberlandia")
+  )
+
+# Criando dataframe de coordenadas e unindo aos dados (Left Join)
+coordenadas <- data.frame(
+  site = c("Vicosa", "Uberlandia"),
+  lat = c(-20.7547, -18.9186),
+  long = c(-42.8797, -48.2772)
+)
+
+d_allc <- left_join(d_all, coordenadas, by = "site")
+d_allc
+```
+
+------------------------------------------------------------------------
+
+## 2. Visualização de Dados e Estatística
+
+### 2.1. Gráficos de Rendimento (Yield)
+
+Aqui usamos o `ggplot2`. O `geom_boxplot` mostra a distribuição, enquanto o `geom_jitter` adiciona os pontos individuais para visualizarmos a densidade dos dados.
+
+```{r}
+# Criando o gráfico base
+p1 <- d_allc |>
+  ggplot(aes(trt, yield)) +
+  geom_boxplot(outlier.colour = NA) +
+  geom_jitter(width = 0.1, alpha = 0.4) +
+  theme_light() +
+  ylim(3000, 4500) +
+  labs(x = "Treatment", y = "Yield (kg/ha)") +
+  annotate(geom = "text", x = 1, y = 4400, label = "t = -15\np < 0.001")
+
+# Exibindo gráfico estático
+p1
+
+# Tornando o gráfico interativo com Plotly
+ggplotly(p1)
+```
+
+### 2.2. Teste Estatístico
+
+O pacote `rstatix` é usado para realizar o Teste T de Student de forma rápida e organizada.
+
+```{r}
+d_allc |> 
+  t_test(yield ~ trt)
+```
+
+Resumo dos Componentes do Código: d_allc: O banco de dados com todas as informações.
+
+`|>`: O "passa-bastão" (pipe), que entrega os dados para a função seguinte.
+
+`t_test`: A função que executa o cálculo.
+
+`yield ~ trt:` A fórmula. O `~` (til) significa "em função de". Ou seja, você quer saber se a produtividade varia em função do tratamento aplicado.
+
+------------------------------------------------------------------------
+
+## 3. Mapas de Localização
+
+Trabalhamos com o pacote `sf` (Simple Features) para lidar com objetos geográficos e `rnaturalearth` para buscar as fronteiras dos países.
+
+### 3.1. Mapa de Fazendas na Etiópia
+
+```{r}
+library(rnaturalearth)
+library(sf)
+
+# Obtendo polígono da Etiópia
+etiopia_mapa <- ne_countries(scale = "medium", country = "Ethiopia", returnclass = "sf")
+
+# Supondo leitura do arquivo de café (cr)
+ cr <- read_xlsx("dados_diversos.xlsx", "coffee rust")
+
+# Exemplo visual (Gráfico de Camadas)
+ ggplot() +
+   geom_sf(data = etiopia_mapa, fill = "antiquewhite") +
+   geom_point(data = cr, aes(x = lon, y = lat), color = "brown") +
+   theme_minimal() +
+   coord_sf()
+```
+
+### 3.2. Mapa do Brasil com Capitais e Pontos de Estudo
+
+Nesta seção, unimos as coordenadas das capitais brasileiras (extraídas do mapa) com os seus pontos de estudo para criar um mapa completo e interativo.
+
+```{r}
+library(ggthemes)
+
+# Obtendo estados do Brasil
+br_states <- ne_states(country = "Brazil", returnclass = "sf")
+
+# Preparando dados das capitais a partir do objeto geográfico
+capitais <- br_states %>%
+  st_drop_geometry() %>%
+  select(name, latitude, longitude) %>%
+  rename(site = name, lat = latitude, long = longitude) %>%
+  mutate(tipo = "Capital")
+
+# Unindo com os seus pontos de estudo
+coordenadas_estudo <- coordenadas |> mutate(tipo = "Ponto de Estudo")
+todos_pontos <- bind_rows(coordenadas_estudo, capitais)
+
+# Criando o mapa com rótulos
+p_brasil <- ggplot() +
+  geom_sf(data = br_states, fill = "darkgreen", color = "white", size = 0.2) +
+  geom_point(data = todos_pontos, 
+             aes(x = long, y = lat, color = tipo,
+                 text = paste("Local:", site)), size = 2) +
+  geom_text(data = todos_pontos,
+            aes(x = long, y = lat, label = site),
+            size = 2, vjust = -1, check_overlap = TRUE) +
+  scale_color_manual(values = c("Capital" = "orange", "Ponto de Estudo" = "red")) +
+  theme_map() +
+  labs(title = "Brasil: Capitais e Locais de Estudo")
+
+# Versão Interativa
+ggplotly(p_brasil, tooltip = "text")
+```
+
+------------------------------------------------------------------------
+
+### Notas de Execução:
+
+-   **Camadas do GGPlot**: Lembre-se que o `geom_sf()` deve vir antes do `geom_point()` para que o mapa sirva de fundo e não cubra os pontos.
+-   **Dica de Pipe**: Utilize `|>` ou `%>%` para manter o código limpo. O `|>` é o pipe nativo do R (mais moderno).
+-   **Interatividade**: O `ggplotly()` é ótimo para exploração, mas lembre-se de que ele não funciona em arquivos PDF, apenas em formatos HTML.

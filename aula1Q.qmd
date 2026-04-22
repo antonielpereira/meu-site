@@ -1,0 +1,133 @@
+---
+title: "FIP 606 - Aula1"
+author: "Antoniel Pereira"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    code-fold: show
+execute:
+  warning: false
+  message: false
+---
+
+## 1. Introdução à Experimentação e Programação R
+
+Nesta primeira etapa, abordamos a lógica de programação básica. O R funciona através da atribuição de valores a objetos, permitindo cálculos rápidos e armazenamento de informações.
+
+**Conceitos gerados:** \* **Atribuição (`<-`):** Criar variáveis para armazenar dados. \* **Operações Aritméticas:** O R como uma calculadora científica potente.
+
+```{r}
+#| label: operacoes-basicas
+a <- 1
+b <- 2
+c <- 3
+soma <- a + b + c
+soma
+
+```
+
+------------------------------------------------------------------------
+
+## 2. Configuração do Ambiente e Pacotes
+
+Os pacotes são extensões que contêm funções específicas. Para esta aula, focamos no `tidyverse` (manipulação e visualização) e pacotes estatísticos como `car` e `agricolae`.
+
+**Conceitos gerados:**
+
+-   **Bibliotecas:** Ativar ferramentas específicas (`library`).
+-   **Dataset nativo:** O comando `data("disease")` demonstra como o R possui conjuntos de dados prontos para treino.
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(car)
+library(agricolae)
+
+```
+
+------------------------------------------------------------------------
+
+## 3. Estruturação dos Dados (Dataframe)
+
+Trabalhamos com um experimento em casa de vegetação avaliando o efeito de um fungicida na severidade da doença.
+
+**Aplicações Práticas:**
+
+-   **Vetores:** Criação de sequências numéricas (`1:8`) e repetição de caracteres (`rep`).
+-   **Data Frame:** A estrutura de tabela fundamental onde cada coluna é uma variável.
+
+```{r}
+#| label: criacao-dados
+
+# Criando o banco de dados de forma otimizada
+dados <- data.frame(
+  Planta = 1:8,
+  Tratamento = c(rep("Controle", 4), rep("Fungicida", 4)),
+  Severidade = c(42, 38, 45, 40, 12, 18, 15, 10)
+)
+
+# Visualizando a estrutura
+knitr::kable(dados)
+
+```
+
+------------------------------------------------------------------------
+
+## 4. Visualização de Dados com ggplot2
+
+A visualização permite identificar padrões visuais antes da análise estatística. Criamos um gráfico que combina colunas (média) com pontos (dados brutos).
+
+**Conceitos gerados:**
+
+-   **Camadas (Layers):** O `ggplot` funciona somando camadas (geom_bar + geom_jitter).
+-   **Estética (Aes):** Mapeamento de quais dados vão para os eixos X e Y.
+
+```{r}
+#| label: grafico-severidade
+
+ggplot(dados, aes(x = Tratamento, y = Severidade, fill = Tratamento)) +
+  # Camada de barras com a média
+  geom_bar(stat = "summary", fun = "mean", width = 0.6, alpha = 0.7) + 
+  # Camada de dispersão para mostrar a variação individual
+  geom_jitter(width = 0.1, size = 3, alpha = 0.6, color = "black") +
+  # Customização visual
+  labs(
+    title = "Efeito do Fungicida na Severidade",
+    x = "Tratamento",
+    y = "Severidade (%)",
+    fill = "Grupo"
+  ) +
+  theme_classic() +
+  scale_fill_manual(values = c("Controle" = "#A3A3A3", "Fungicida" = "#1b9e77"))
+
+```
+
+------------------------------------------------------------------------
+
+## 5. Análise Estatística (Teste t de Student)
+
+O Teste t é aplicado para comparar as médias de **dois grupos independentes**.
+
+**Conceitos gerados:**
+
+-   **Hipótese Nula (**$H_0$): Não há diferença entre as médias.
+-   **Hipótese Alternativa (**$H_1$): O fungicida alterou a severidade.
+
+```{r}
+#| label: teste-t
+
+# Execução do teste
+resultado_teste <- t.test(Severidade ~ Tratamento, data = dados, var.equal = TRUE)
+print(resultado_teste)
+
+```
+
+### Conclusão do Experimento:
+
+Diferente da nota inicial, ao analisarmos o p-valor gerado ($p < 0.05$), observamos que **as diferenças SÃO estatisticamente significativas**. O tratamento com fungicida reduziu drasticamente a severidade média em comparação ao controle.

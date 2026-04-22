@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: docs  # ESSENCIAL: diz para o site ser criado aqui
+
+website:
+  title: "website"
+  navbar:
+    left:
+      - href: aula1Q.qmd
+        text: Aula1
+      - href: aula2.qmd
+        text: Aula 02
+      - href: aula3.qmd
+        text: Aula 03
+      - href: aula4.qmd
+        text: Aula 04
+      - href: aula5.qmd
+        text: Aula 05
+      - href: aula6.qmd
+        text: Aula 06
+      - about.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+editor: visual
+
