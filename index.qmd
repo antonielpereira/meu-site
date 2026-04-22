@@ -1,7 +1,14 @@
 ---
-title: "website"
+title: "Aulas da disciplina FIP 606 - ANÁLISE E VISUALIZAÇÃO DE DADOS EM FITOPATOLOGIA"
+subtitle: "Organização das aulas em site"
+image: capa-website.png # Se tiver uma foto na pasta
+about:
+  template: jolla # Modelos: jolla, trestles, solana, marquee
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/antonielpereira
 ---
 
-This is a Quarto website.
-
-testando para organizar
+relatório de aulas da disciplina de FIP 606
+---
