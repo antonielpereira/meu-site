@@ -18,6 +18,8 @@ website:
         text: Aula 05
       - href: aula6.qmd
         text: Aula 06
+      - href: aula7.qmd
+        text: Aula 07
       - about.qmd
 
 format:
