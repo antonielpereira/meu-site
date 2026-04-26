@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Antoniel Pereira">
-<meta name="dcterms.date" content="2026-04-21">
+<meta name="dcterms.date" content="2026-04-26">
 
 <title>Aula 06 - Análise Fitopatológica: Eficácia de Fungicidas e Produtividade – website</title>
 <style>
@@ -105,6 +105,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -170,24 +199,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a></li>
-  <li><a href="#ensaio-em-vaso-fungicidas-e-doses" id="toc-ensaio-em-vaso-fungicidas-e-doses" class="nav-link" data-scroll-target="#ensaio-em-vaso-fungicidas-e-doses">1. Ensaio em Vaso: Fungicidas e Doses</a>
+  <li><a href="#aula-6-anova-fatorial-blocos-e-correlação" id="toc-aula-6-anova-fatorial-blocos-e-correlação" class="nav-link active" data-scroll-target="#aula-6-anova-fatorial-blocos-e-correlação">Aula 6: ANOVA fatorial, blocos e correlação</a>
   <ul class="collapse">
-  <li><a href="#carregamento-e-preparação" id="toc-carregamento-e-preparação" class="nav-link" data-scroll-target="#carregamento-e-preparação">Carregamento e Preparação</a></li>
-  <li><a href="#exploração-visual-interação-entre-fatores" id="toc-exploração-visual-interação-entre-fatores" class="nav-link" data-scroll-target="#exploração-visual-interação-entre-fatores">Exploração Visual: Interação entre Fatores</a></li>
-  <li><a href="#análise-estatística-anova-fatorial" id="toc-análise-estatística-anova-fatorial" class="nav-link" data-scroll-target="#análise-estatística-anova-fatorial">Análise Estatística (ANOVA Fatorial)</a></li>
-  <li><a href="#comparação-de-médias-post-hoc" id="toc-comparação-de-médias-post-hoc" class="nav-link" data-scroll-target="#comparação-de-médias-post-hoc">Comparação de Médias (Post-hoc)</a></li>
+  <li><a href="#pacotes" id="toc-pacotes" class="nav-link" data-scroll-target="#pacotes">Pacotes</a></li>
   </ul></li>
-  <li><a href="#ensaio-de-campo-produtividade-dbc" id="toc-ensaio-de-campo-produtividade-dbc" class="nav-link" data-scroll-target="#ensaio-de-campo-produtividade-dbc">2. Ensaio de Campo: Produtividade (DBC)</a>
+  <li><a href="#parte-1-experimento-fatorial-fungicida-dose" id="toc-parte-1-experimento-fatorial-fungicida-dose" class="nav-link" data-scroll-target="#parte-1-experimento-fatorial-fungicida-dose">Parte 1 — Experimento fatorial: fungicida × dose</a>
   <ul class="collapse">
-  <li><a href="#organização-dos-dados" id="toc-organização-dos-dados" class="nav-link" data-scroll-target="#organização-dos-dados">Organização dos Dados</a></li>
-  <li><a href="#modelo-de-blocos-e-médias-ajustadas" id="toc-modelo-de-blocos-e-médias-ajustadas" class="nav-link" data-scroll-target="#modelo-de-blocos-e-médias-ajustadas">Modelo de Blocos e Médias Ajustadas</a></li>
-  <li><a href="#gráfico-de-resultados-finais" id="toc-gráfico-de-resultados-finais" class="nav-link" data-scroll-target="#gráfico-de-resultados-finais">Gráfico de Resultados Finais</a></li>
+  <li><a href="#importação-e-preparo-dos-dados" id="toc-importação-e-preparo-dos-dados" class="nav-link" data-scroll-target="#importação-e-preparo-dos-dados">Importação e preparo dos dados</a></li>
+  <li><a href="#visualização-inicial" id="toc-visualização-inicial" class="nav-link" data-scroll-target="#visualização-inicial">Visualização inicial</a></li>
+  <li><a href="#modelos-candidatos" id="toc-modelos-candidatos" class="nav-link" data-scroll-target="#modelos-candidatos">Modelos candidatos</a>
+  <ul class="collapse">
+  <li><a href="#modelo-1-efeito-apenas-de-fungicida" id="toc-modelo-1-efeito-apenas-de-fungicida" class="nav-link" data-scroll-target="#modelo-1-efeito-apenas-de-fungicida">Modelo 1: efeito apenas de fungicida</a></li>
+  <li><a href="#modelo-2-efeito-apenas-de-dose" id="toc-modelo-2-efeito-apenas-de-dose" class="nav-link" data-scroll-target="#modelo-2-efeito-apenas-de-dose">Modelo 2: efeito apenas de dose</a></li>
+  <li><a href="#modelo-3-modelo-fatorial-com-interação" id="toc-modelo-3-modelo-fatorial-com-interação" class="nav-link" data-scroll-target="#modelo-3-modelo-fatorial-com-interação">Modelo 3: modelo fatorial com interação</a></li>
+  <li><a href="#interpretação-da-interação" id="toc-interpretação-da-interação" class="nav-link" data-scroll-target="#interpretação-da-interação">Interpretação da interação</a></li>
   </ul></li>
-  <li><a href="#análise-de-correlação-incidência-x-escleródios" id="toc-análise-de-correlação-incidência-x-escleródios" class="nav-link" data-scroll-target="#análise-de-correlação-incidência-x-escleródios">3. Análise de Correlação: Incidência x Escleródios</a>
+  <li><a href="#diagnóstico-do-modelo" id="toc-diagnóstico-do-modelo" class="nav-link" data-scroll-target="#diagnóstico-do-modelo">Diagnóstico do modelo</a></li>
+  <li><a href="#médias-ajustadas-e-comparação-múltipla" id="toc-médias-ajustadas-e-comparação-múltipla" class="nav-link" data-scroll-target="#médias-ajustadas-e-comparação-múltipla">Médias ajustadas e comparação múltipla</a>
   <ul class="collapse">
-  <li><a href="#visualização-com-coeficiente-de-correlação" id="toc-visualização-com-coeficiente-de-correlação" class="nav-link" data-scroll-target="#visualização-com-coeficiente-de-correlação">Visualização com Coeficiente de Correlação</a></li>
-  <li><a href="#exploração-das-distribuições" id="toc-exploração-das-distribuições" class="nav-link" data-scroll-target="#exploração-das-distribuições">Exploração das Distribuições</a></li>
+  <li><a href="#tabela-ilustrativa-para-a-interação" id="toc-tabela-ilustrativa-para-a-interação" class="nav-link" data-scroll-target="#tabela-ilustrativa-para-a-interação">Tabela ilustrativa para a interação</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#parte-2-experimento-em-blocos-ao-acaso" id="toc-parte-2-experimento-em-blocos-ao-acaso" class="nav-link" data-scroll-target="#parte-2-experimento-em-blocos-ao-acaso">Parte 2 — Experimento em blocos ao acaso</a>
+  <ul class="collapse">
+  <li><a href="#importação-e-preparo-dos-dados-1" id="toc-importação-e-preparo-dos-dados-1" class="nav-link" data-scroll-target="#importação-e-preparo-dos-dados-1">Importação e preparo dos dados</a></li>
+  <li><a href="#visualização-inicial-1" id="toc-visualização-inicial-1" class="nav-link" data-scroll-target="#visualização-inicial-1">Visualização inicial</a></li>
+  <li><a href="#modelo-em-blocos" id="toc-modelo-em-blocos" class="nav-link" data-scroll-target="#modelo-em-blocos">Modelo em blocos</a></li>
+  <li><a href="#diagnóstico-do-modelo-1" id="toc-diagnóstico-do-modelo-1" class="nav-link" data-scroll-target="#diagnóstico-do-modelo-1">Diagnóstico do modelo</a></li>
+  <li><a href="#médias-ajustadas-dos-tratamentos" id="toc-médias-ajustadas-dos-tratamentos" class="nav-link" data-scroll-target="#médias-ajustadas-dos-tratamentos">Médias ajustadas dos tratamentos</a></li>
+  <li><a href="#gráfico-com-médias-ajustadas-e-grupos" id="toc-gráfico-com-médias-ajustadas-e-grupos" class="nav-link" data-scroll-target="#gráfico-com-médias-ajustadas-e-grupos">Gráfico com médias ajustadas e grupos</a></li>
+  </ul></li>
+  <li><a href="#parte-3-correlação-e-regressão-linear" id="toc-parte-3-correlação-e-regressão-linear" class="nav-link" data-scroll-target="#parte-3-correlação-e-regressão-linear">Parte 3 — Correlação e regressão linear</a>
+  <ul class="collapse">
+  <li><a href="#importação-dos-dados" id="toc-importação-dos-dados" class="nav-link" data-scroll-target="#importação-dos-dados">Importação dos dados</a></li>
+  <li><a href="#visualização-geral-por-estudo" id="toc-visualização-geral-por-estudo" class="nav-link" data-scroll-target="#visualização-geral-por-estudo">Visualização geral por estudo</a></li>
+  <li><a href="#correlação-geral" id="toc-correlação-geral" class="nav-link" data-scroll-target="#correlação-geral">Correlação geral</a></li>
+  <li><a href="#correlações-por-estudo" id="toc-correlações-por-estudo" class="nav-link" data-scroll-target="#correlações-por-estudo">Correlações por estudo</a></li>
+  <li><a href="#inspeção-das-distribuições" id="toc-inspeção-das-distribuições" class="nav-link" data-scroll-target="#inspeção-das-distribuições">Inspeção das distribuições</a></li>
+  <li><a href="#gráfico-final-com-coeficientes-por-estudo" id="toc-gráfico-final-com-coeficientes-por-estudo" class="nav-link" data-scroll-target="#gráfico-final-com-coeficientes-por-estudo">Gráfico final com coeficientes por estudo</a></li>
+  </ul></li>
+  <li><a href="#síntese-conceitual-da-aula" id="toc-síntese-conceitual-da-aula" class="nav-link" data-scroll-target="#síntese-conceitual-da-aula">Síntese conceitual da aula</a>
+  <ul class="collapse">
+  <li><a href="#interação-em-experimentos-fatoriais" id="toc-interação-em-experimentos-fatoriais" class="nav-link" data-scroll-target="#interação-em-experimentos-fatoriais">1. Interação em experimentos fatoriais</a></li>
+  <li><a href="#uso-de-blocos-para-ganhar-precisão" id="toc-uso-de-blocos-para-ganhar-precisão" class="nav-link" data-scroll-target="#uso-de-blocos-para-ganhar-precisão">2. Uso de blocos para ganhar precisão</a></li>
+  <li><a href="#correlação-não-implica-causalidade" id="toc-correlação-não-implica-causalidade" class="nav-link" data-scroll-target="#correlação-não-implica-causalidade">3. Correlação não implica causalidade</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -214,7 +269,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 21, 2026</p>
+      <p class="date">April 26, 2026</p>
     </div>
   </div>
   
@@ -226,44 +281,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="introdução" class="level2">
-<h2 class="anchored" data-anchor-id="introdução">Introdução</h2>
-<p>Este documento apresenta a análise estatística de experimentos fitopatológicos, abrangendo desde ensaios em vasos (avaliação de severidade e interação entre doses) até ensaios de campo (blocos ao acaso) e correlações epidemiológicas.</p>
+<section id="aula-6-anova-fatorial-blocos-e-correlação" class="level1">
+<h1>Aula 6: ANOVA fatorial, blocos e correlação</h1>
+<p>Aqui foi trabalhado três situações analíticas bastante comuns em experimentação agronômica e fitopatológica:</p>
+<ol type="1">
+<li><strong>experimento fatorial</strong>, para avaliar simultaneamente os efeitos de fungicida, dose e sua interação sobre a severidade;</li>
+<li><strong>delineamento em blocos</strong>, para analisar produtividade em experimento de campo controlando a heterogeneidade experimental;</li>
+<li><strong>análise de associação</strong>, por meio de correlação e regressão linear simples, para investigar a relação entre variáveis quantitativas.</li>
+</ol>
+<p>Ao longo do código, os comentários explicam <strong>como</strong> executar os procedimentos, <strong>por que</strong> eles são usados e <strong>como interpretar</strong> os resultados.</p>
+<section id="pacotes" class="level2">
+<h2 class="anchored" data-anchor-id="pacotes">Pacotes</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcompView)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<hr>
 </section>
-<section id="ensaio-em-vaso-fungicidas-e-doses" class="level2">
-<h2 class="anchored" data-anchor-id="ensaio-em-vaso-fungicidas-e-doses">1. Ensaio em Vaso: Fungicidas e Doses</h2>
-<p>Nesta etapa, carregamos os dados e calculamos a incidência. O objetivo é entender como diferentes tratamentos e doses de fungicida afetam a severidade da doença.</p>
-<section id="carregamento-e-preparação" class="level3">
-<h3 class="anchored" data-anchor-id="carregamento-e-preparação">Carregamento e Preparação</h3>
+</section>
+<section id="parte-1-experimento-fatorial-fungicida-dose" class="level1">
+<h1>Parte 1 — Experimento fatorial: fungicida × dose</h1>
+<section id="importação-e-preparo-dos-dados" class="level2">
+<h2 class="anchored" data-anchor-id="importação-e-preparo-dos-dados">Importação e preparo dos dados</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fungicidas <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="st">"fungicida_vaso"</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fungicidas <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"fungicida_vaso"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fungicidas2 <span class="ot">&lt;-</span> fungicidas <span class="sc">|&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incidencia =</span> inf_seeds <span class="sc">/</span> n_seeds,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">dose =</span> <span class="fu">factor</span>(dose))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fungicidas2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fungicidas2 <span class="ot">&lt;-</span> fungicidas <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">incidencia =</span> inf_seeds <span class="sc">/</span> n_seeds,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dose =</span> <span class="fu">factor</span>(dose),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">treat =</span> <span class="fu">factor</span>(treat)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fungicidas2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 20
 Columns: 9
-$ treat      &lt;chr&gt; "Ionic liquid", "Ionic liquid", "Ionic liquid", "Ionic liqu…
+$ treat      &lt;fct&gt; Ionic liquid, Ionic liquid, Ionic liquid, Ionic liquid, Ion…
 $ dose       &lt;fct&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 2, 2, 2, 2, 2, 0.5, 0.5, 0.5, 0.5,…
 $ rep        &lt;dbl&gt; 1, 2, 3, 4, 5, 2, 3, 4, 5, 1, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5
 $ n_sp       &lt;dbl&gt; 103, 125, 210, 97, 180, 116, 166, 157, 129, 84, 121, 123, 1…
@@ -274,58 +337,111 @@ $ severity   &lt;dbl&gt; 0.12621359, 0.24800000, 0.38095238, 0.28865979, 0.41666
 $ incidencia &lt;dbl&gt; 0.40, 0.48, 0.48, 0.40, 0.44, 0.24, 0.12, 0.04, 0.28, 0.04,…</code></pre>
 </div>
 </div>
+<p>A variável <code>incidencia</code> foi calculada como a proporção de sementes infectadas:</p>
+<p><span class="math display">\[
+\text{incidência} = \frac{\text{número de sementes infectadas}}{\text{número total de sementes avaliadas}}
+\]</span></p>
+<p>Neste primeiro conjunto, a variável resposta analisada será <strong>severity</strong>. Como <code>treat</code> e <code>dose</code> representam tratamentos experimentais, ambos devem ser tratados como fatores.</p>
 </section>
-<section id="exploração-visual-interação-entre-fatores" class="level3">
-<h3 class="anchored" data-anchor-id="exploração-visual-interação-entre-fatores">Exploração Visual: Interação entre Fatores</h3>
-<p>Antes de rodar a ANOVA, visualizamos como a severidade se comporta em cada tratamento dentro de cada dose.</p>
+<section id="visualização-inicial" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-inicial">Visualização inicial</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fungicidas2 <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treat, severity, <span class="at">color =</span> dose)) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fungicidas2 <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> treat, <span class="at">y =</span> severity, <span class="at">color =</span> dose)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.08</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> dose) <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_colorblind</span>() <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Tratamento"</span>, <span class="at">y =</span> <span class="st">"Severidade"</span>, <span class="at">color =</span> <span class="st">"Dose"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div id="fig-interacao" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-interacao-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="aula6_files/figure-html/fig-interacao-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-interacao-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Severidade da doença por tratamento e dose.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="análise-estatística-anova-fatorial" class="level3">
-<h3 class="anchored" data-anchor-id="análise-estatística-anova-fatorial">Análise Estatística (ANOVA Fatorial)</h3>
-<p>Verificamos os efeitos principais e, crucialmente, a <strong>interação</strong> entre Tratamento e Dose.</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo com interação (Tratamento * Dose)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(severity <span class="sc">~</span> treat <span class="sc">*</span> dose, <span class="at">data =</span> fungicidas2)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico de resíduos</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(m3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Fungicida"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Severidade"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Dose"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="aula6_files/figure-html/anova-fatorial-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="aula6_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
+</div>
+<div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de ANOVA</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x.factor =</span> fungicidas2<span class="sc">$</span>treat,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace.factor =</span> fungicidas2<span class="sc">$</span>dose,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">response =</span> fungicidas2<span class="sc">$</span>severity,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Fungicida"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Severidade média"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace.label =</span> <span class="st">"Dose"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A inspeção gráfica antecede a modelagem. Em um experimento fatorial, ela é importante porque permite avaliar se há indícios de <strong>interação</strong> entre os fatores. Em termos práticos:</p>
+<ul>
+<li>se as linhas do gráfico de interação forem aproximadamente paralelas, a evidência visual favorece ausência de interação;</li>
+<li>se as linhas se cruzarem ou divergirem claramente, isso sugere que o efeito de um fator depende do nível do outro.</li>
+</ul>
+</section>
+<section id="modelos-candidatos" class="level2">
+<h2 class="anchored" data-anchor-id="modelos-candidatos">Modelos candidatos</h2>
+<section id="modelo-1-efeito-apenas-de-fungicida" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-1-efeito-apenas-de-fungicida">Modelo 1: efeito apenas de fungicida</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(severity <span class="sc">~</span> treat, <span class="at">data =</span> fungicidas2)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: severity
+          Df  Sum Sq Mean Sq F value   Pr(&gt;F)   
+treat      1 0.11323 0.11323  9.8892 0.005603 **
+Residuals 18 0.20610 0.01145                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="modelo-2-efeito-apenas-de-dose" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-2-efeito-apenas-de-dose">Modelo 2: efeito apenas de dose</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(severity <span class="sc">~</span> dose, <span class="at">data =</span> fungicidas2)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: severity
+          Df   Sum Sq  Mean Sq F value  Pr(&gt;F)  
+dose       1 0.073683 0.073683  5.3991 0.03206 *
+Residuals 18 0.245649 0.013647                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="modelo-3-modelo-fatorial-com-interação" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-3-modelo-fatorial-com-interação">Modelo 3: modelo fatorial com interação</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(severity <span class="sc">~</span> treat <span class="sc">*</span> dose, <span class="at">data =</span> fungicidas2)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
@@ -340,28 +456,92 @@ Residuals  16 0.059678 0.003730
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<blockquote class="blockquote">
-<p><strong>Nota:</strong> Se a interação for significativa (p &lt; 0.05), devemos analisar o efeito de tratamentos dentro de cada dose separadamente.</p>
-</blockquote>
+<p>O modelo fatorial com interação pode ser escrito como:</p>
+<p><span class="math display">\[
+Y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}
+\]</span></p>
+<p>em que:</p>
+<ul>
+<li><span class="math inline">\(Y_{ijk}\)</span> é a observação de severidade na combinação entre o fungicida <span class="math inline">\(i\)</span> e a dose <span class="math inline">\(j\)</span>;</li>
+<li><span class="math inline">\(\mu\)</span> é a média geral;</li>
+<li><span class="math inline">\(\alpha_i\)</span> é o efeito do fungicida;</li>
+<li><span class="math inline">\(\beta_j\)</span> é o efeito da dose;</li>
+<li><span class="math inline">\((\alpha\beta)_{ij}\)</span> é o efeito de interação entre fungicida e dose;</li>
+<li><span class="math inline">\(\varepsilon_{ijk}\)</span> é o erro aleatório, assumido com média zero e variância constante.</li>
+</ul>
+<p>Na ANOVA, a estatística de teste para cada fonte de variação é dada por:</p>
+<p><span class="math display">\[
+F = \frac{QM_{\text{fonte}}}{QM_{\text{erro}}}
+\]</span></p>
+<p>em que <span class="math inline">\(QM\)</span> é o quadrado médio. Valores altos de <span class="math inline">\(F\)</span> indicam que a variação explicada pela fonte é grande em relação à variação residual.</p>
 </section>
-<section id="comparação-de-médias-post-hoc" class="level3">
-<h3 class="anchored" data-anchor-id="comparação-de-médias-post-hoc">Comparação de Médias (Post-hoc)</h3>
+<section id="interpretação-da-interação" class="level3">
+<h3 class="anchored" data-anchor-id="interpretação-da-interação">Interpretação da interação</h3>
+<p>Em experimentos fatoriais, a presença de interação significativa muda a forma de interpretar os efeitos principais. Quando a interação é relevante, evita-se discutir apenas “o melhor fungicida” ou “a melhor dose” isoladamente, porque o efeito de um depende do outro. Nesse caso, a interpretação correta passa a ser feita por <strong>efeitos simples</strong>, isto é, comparando doses dentro de cada fungicida, ou fungicidas dentro de cada dose.</p>
+</section>
+</section>
+<section id="diagnóstico-do-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="diagnóstico-do-modelo">Diagnóstico do modelo</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>medias_m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m3, <span class="sc">~</span> treat <span class="sc">|</span> dose)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(medias_m3, <span class="at">Letters =</span> LETTERS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>res_m3 <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(m3)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res_m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>O pacote <code>{DHARMa}</code> produz resíduos simulados padronizados, úteis para avaliar:</p>
+<ul>
+<li>padrões de assimetria;</li>
+<li>heterogeneidade de variâncias;</li>
+<li>desvios importantes de distribuição;</li>
+<li>observações discrepantes.</li>
+</ul>
+<p>Embora <code>lm()</code> assuma erros normais com variância constante, em aplicações práticas a avaliação gráfica dos resíduos costuma ser mais informativa do que depender apenas de testes formais.</p>
+</section>
+<section id="médias-ajustadas-e-comparação-múltipla" class="level2">
+<h2 class="anchored" data-anchor-id="médias-ajustadas-e-comparação-múltipla">Médias ajustadas e comparação múltipla</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>medias_m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m3, <span class="sc">~</span> dose <span class="sc">|</span> treat)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>medias_m3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>dose = 0.5:
- treat        emmean     SE df lower.CL upper.CL .group
- Tebuconazole 0.0210 0.0273 16 -0.03690   0.0789  A    
- Ionic liquid 0.2921 0.0273 16  0.23420   0.3500   B   
+<pre><code>treat = Ionic liquid:
+ dose emmean     SE df lower.CL upper.CL
+ 0.5  0.2921 0.0273 16  0.23420   0.3500
+ 2    0.0501 0.0273 16 -0.00781   0.1080
 
-dose = 2:
- treat        emmean     SE df lower.CL upper.CL .group
- Tebuconazole 0.0202 0.0273 16 -0.03768   0.0781  A    
- Ionic liquid 0.0501 0.0273 16 -0.00781   0.1080  A    
+treat = Tebuconazole:
+ dose emmean     SE df lower.CL upper.CL
+ 0.5  0.0210 0.0273 16 -0.03690   0.0789
+ 2    0.0202 0.0273 16 -0.03768   0.0781
+
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(medias_m3, <span class="at">Letters =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>treat = Ionic liquid:
+ dose emmean     SE df lower.CL upper.CL .group
+ 2    0.0501 0.0273 16 -0.00781   0.1080  a    
+ 0.5  0.2921 0.0273 16  0.23420   0.3500   b   
+
+treat = Tebuconazole:
+ dose emmean     SE df lower.CL upper.CL .group
+ 2    0.0202 0.0273 16 -0.03768   0.0781  a    
+ 0.5  0.0210 0.0273 16 -0.03690   0.0789  a    
 
 Confidence level used: 0.95 
 significance level used: alpha = 0.05 
@@ -370,37 +550,104 @@ NOTE: If two or more means share the same grouping symbol,
       But we also did not show them to be the same. </code></pre>
 </div>
 </div>
-<hr>
+<p>As médias obtidas por <code>emmeans()</code> são <strong>médias marginais estimadas</strong>, também chamadas de médias ajustadas. Elas representam as médias previstas pelo modelo e são especialmente úteis quando o desenho não é perfeitamente balanceado ou quando há termos adicionais no modelo.</p>
+<p>A função <code>cld()</code> organiza os grupos de médias por letras. Médias que compartilham a mesma letra não diferem entre si ao nível de significância adotado.</p>
+<section id="tabela-ilustrativa-para-a-interação" class="level3">
+<h3 class="anchored" data-anchor-id="tabela-ilustrativa-para-a-interação">Tabela ilustrativa para a interação</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Fungicida</th>
+<th>Dose 0.5</th>
+<th>Dose 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ionic liquid</td>
+<td>0.29 Aa</td>
+<td>0.05 Ab</td>
+</tr>
+<tr class="even">
+<td>Tebuconazole</td>
+<td>0.02 Ba</td>
+<td>0.02 Aa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Leitura da tabela:</strong></p>
+<ul>
+<li>letras maiúsculas comparam fungicidas dentro de cada dose;</li>
+<li>letras minúsculas comparam doses dentro de cada fungicida;</li>
+<li>médias com a mesma letra não diferem a 5% de probabilidade.</li>
+</ul>
 </section>
 </section>
-<section id="ensaio-de-campo-produtividade-dbc" class="level2">
-<h2 class="anchored" data-anchor-id="ensaio-de-campo-produtividade-dbc">2. Ensaio de Campo: Produtividade (DBC)</h2>
-<p>No campo, o delineamento costuma ser em Blocos Completos Casualizados (DBC) para controlar a heterogeneidade do solo.</p>
-<section id="organização-dos-dados" class="level3">
-<h3 class="anchored" data-anchor-id="organização-dos-dados">Organização dos Dados</h3>
+</section>
+<section id="parte-2-experimento-em-blocos-ao-acaso" class="level1">
+<h1>Parte 2 — Experimento em blocos ao acaso</h1>
+<section id="importação-e-preparo-dos-dados-1" class="level2">
+<h2 class="anchored" data-anchor-id="importação-e-preparo-dos-dados-1">Importação e preparo dos dados</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>campo <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="st">"fungicida_campo"</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>campo2 <span class="ot">&lt;-</span> campo <span class="sc">|&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trat =</span> <span class="fu">factor</span>(TRAT),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">bloco =</span> <span class="fu">factor</span>(BLOCO)) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(trat, bloco, PROD) <span class="sc">|&gt;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">prod =</span> PROD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>campo <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"fungicida_campo"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>campo2 <span class="ot">&lt;-</span> campo <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">trat =</span> <span class="fu">factor</span>(TRAT),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">bloco =</span> <span class="fu">factor</span>(BLOCO)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    trat,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    bloco,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">prod =</span> PROD</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(campo2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 32
+Columns: 3
+$ trat  &lt;fct&gt; 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6…
+$ bloco &lt;fct&gt; 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2…
+$ prod  &lt;dbl&gt; 4611.3, 4311.7, 4544.5, 3409.4, 5022.6, 4839.3, 4902.6, 4975.2, …</code></pre>
 </div>
+</div>
+<p>Neste conjunto, a variável resposta é a produtividade (<code>prod</code>). O fator <code>bloco</code> representa uma estrutura de controle experimental usada para reduzir a variabilidade não controlada entre unidades experimentais.</p>
 </section>
-<section id="modelo-de-blocos-e-médias-ajustadas" class="level3">
-<h3 class="anchored" data-anchor-id="modelo-de-blocos-e-médias-ajustadas">Modelo de Blocos e Médias Ajustadas</h3>
-<p>Ajustamos o modelo incluindo o efeito de <code>bloco</code>. Em seguida, extraímos as letras do teste de Tukey para o gráfico final.</p>
+<section id="visualização-inicial-1" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-inicial-1">Visualização inicial</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m_bloco <span class="ot">&lt;-</span> <span class="fu">lm</span>(prod <span class="sc">~</span> trat <span class="sc">+</span> bloco, <span class="at">data =</span> campo2)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA e Diagnóstico</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_bloco)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>campo2 <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> trat, <span class="at">y =</span> prod)) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.08</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">18</span>) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tratamento fungicida"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="st">"Produtividade (kg ha"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Os pontos mostram os valores individuais e o losango representa a média de cada tratamento. Essa visualização ajuda a avaliar amplitude dos dados, dispersão dentro dos tratamentos e possíveis diferenças entre médias.</p>
+</section>
+<section id="modelo-em-blocos" class="level2">
+<h2 class="anchored" data-anchor-id="modelo-em-blocos">Modelo em blocos</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>m_bloco <span class="ot">&lt;-</span> <span class="fu">lm</span>(prod <span class="sc">~</span> trat <span class="sc">+</span> bloco, <span class="at">data =</span> campo2)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_bloco)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
@@ -413,130 +660,326 @@ Residuals 21 3406384  162209
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+</div>
+<p>O modelo para delineamento em blocos ao acaso pode ser escrito como:</p>
+<p><span class="math display">\[
+Y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij}
+\]</span></p>
+<p>em que:</p>
+<ul>
+<li><span class="math inline">\(Y_{ij}\)</span> é a produtividade observada no tratamento <span class="math inline">\(i\)</span> dentro do bloco <span class="math inline">\(j\)</span>;</li>
+<li><span class="math inline">\(\mu\)</span> é a média geral;</li>
+<li><span class="math inline">\(\tau_i\)</span> é o efeito do tratamento;</li>
+<li><span class="math inline">\(\beta_j\)</span> é o efeito do bloco;</li>
+<li><span class="math inline">\(\varepsilon_{ij}\)</span> é o erro aleatório.</li>
+</ul>
+<p>A principal função dos blocos é absorver parte da variabilidade sistemática do experimento. Quando os blocos capturam heterogeneidade real da área experimental, o erro residual tende a diminuir, aumentando a precisão das comparações entre tratamentos.</p>
+</section>
+<section id="diagnóstico-do-modelo-1" class="level2">
+<h2 class="anchored" data-anchor-id="diagnóstico-do-modelo-1">Diagnóstico do modelo</h2>
+<div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(m_bloco))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>res_bloco <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(m_bloco)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res_bloco)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="aula6_files/figure-html/modelo-campo-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="aula6_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Médias e Letras</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>medias_m_bloco <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m_bloco, <span class="sc">~</span> trat)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>res_cld <span class="ot">&lt;-</span> <span class="fu">cld</span>(medias_m_bloco, <span class="at">Letters =</span> LETTERS) <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
-<section id="gráfico-de-resultados-finais" class="level3">
-<h3 class="anchored" data-anchor-id="gráfico-de-resultados-finais">Gráfico de Resultados Finais</h3>
+<section id="médias-ajustadas-dos-tratamentos" class="level2">
+<h2 class="anchored" data-anchor-id="médias-ajustadas-dos-tratamentos">Médias ajustadas dos tratamentos</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>campo2 <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> trat, <span class="at">y =</span> prod)) <span class="sc">+</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.05</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">"gray40"</span>) <span class="sc">+</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> res_cld, <span class="fu">aes</span>(<span class="at">y =</span> emmean), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">data =</span> res_cld, </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">y =</span> emmean, <span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> res_cld, </span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">y =</span> upper.CL, <span class="at">label =</span> .group), </span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">1.2</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1500</span>, <span class="dv">7500</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1500</span>, <span class="dv">7500</span>, <span class="dv">1000</span>)) <span class="sc">+</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tratamento fungicida"</span>,</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Produtividade (Kg/ha)"</span>,</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Produtividade por Tratamento no Campo"</span>,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Barras representam o Intervalo de Confiança (95%)"</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>medias_m_bloco <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m_bloco, <span class="sc">~</span> trat)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>medias_m_bloco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<div id="fig-produtividade" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-produtividade-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="aula6_files/figure-html/fig-produtividade-1.png" class="img-fluid figure-img" width="672">
+<div class="cell-output cell-output-stdout">
+<pre><code> trat emmean  SE df lower.CL upper.CL
+ 1      4219 201 21     3800     4638
+ 2      4935 201 21     4516     5354
+ 3      5110 201 21     4691     5529
+ 4      5140 201 21     4722     5559
+ 5      5122 201 21     4703     5541
+ 6      5256 201 21     4838     5675
+ 7      5128 201 21     4709     5546
+ 8      5078 201 21     4659     5497
+
+Results are averaged over the levels of: bloco 
+Confidence level used: 0.95 </code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-produtividade-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Produtividade média ajustada por tratamento fungicida.
-</figcaption>
-</figure>
 </div>
-</div>
-</div>
-<hr>
-</section>
-</section>
-<section id="análise-de-correlação-incidência-x-escleródios" class="level2">
-<h2 class="anchored" data-anchor-id="análise-de-correlação-incidência-x-escleródios">3. Análise de Correlação: Incidência x Escleródios</h2>
-<p>Aqui avaliamos a relação entre a incidência da doença e a produção de estruturas de resistência (escleródios), separando por estudos para evitar o <strong>Paradoxo de Simpson</strong>.</p>
-<section id="visualização-com-coeficiente-de-correlação" class="level3">
-<h3 class="anchored" data-anchor-id="visualização-com-coeficiente-de-correlação">Visualização com Coeficiente de Correlação</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mofo <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="st">"mofo"</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>mofo <span class="sc">|&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld)) <span class="sc">+</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">factor</span>(study)), <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">label.x =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> study) <span class="sc">+</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_colorblind</span>() <span class="sc">+</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Incidência (%)"</span>,</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Produtividade (yld)"</span>,</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Análise de Correlação por Local/Estudo"</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>res_cld <span class="ot">&lt;-</span> <span class="fu">cld</span>(medias_m_bloco, <span class="at">Letters =</span> LETTERS)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>res_cld</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> trat emmean  SE df lower.CL upper.CL .group
+ 1      4219 201 21     3800     4638  A    
+ 2      4935 201 21     4516     5354  AB   
+ 8      5078 201 21     4659     5497  AB   
+ 3      5110 201 21     4691     5529  AB   
+ 5      5122 201 21     4703     5541  AB   
+ 7      5128 201 21     4709     5546  AB   
+ 4      5140 201 21     4722     5559  AB   
+ 6      5256 201 21     4838     5675   B   
+
+Results are averaged over the levels of: bloco 
+Confidence level used: 0.95 
+P value adjustment: tukey method for comparing a family of 8 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+</section>
+<section id="gráfico-com-médias-ajustadas-e-grupos" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-com-médias-ajustadas-e-grupos">Gráfico com médias ajustadas e grupos</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>res_cld <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(trat, emmean), <span class="at">y =</span> emmean)) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> .group, <span class="at">y =</span> emmean <span class="sc">+</span> <span class="dv">120</span>), <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tratamento fungicida"</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="st">"Média ajustada de produtividade (kg ha"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-correlacao" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-correlacao-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="aula6_files/figure-html/fig-correlacao-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-correlacao-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Relação entre incidência e escleródios por estudo.
-</figcaption>
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Este gráfico resume a comparação entre tratamentos já considerando o efeito de blocos no ajuste do modelo. Assim, a inferência é mais consistente do que comparar apenas médias brutas.</p>
 </section>
-<section id="exploração-das-distribuições" class="level3">
-<h3 class="anchored" data-anchor-id="exploração-das-distribuições">Exploração das Distribuições</h3>
-<p>É importante verificar a normalidade das variáveis antes de realizar testes de correlação paramétricos.</p>
+</section>
+<section id="parte-3-correlação-e-regressão-linear" class="level1">
+<h1>Parte 3 — Correlação e regressão linear</h1>
+<section id="importação-dos-dados" class="level2">
+<h2 class="anchored" data-anchor-id="importação-dos-dados">Importação dos dados</h2>
+<div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mofo<span class="sc">$</span>yld, <span class="at">main =</span> <span class="st">"Produtividade"</span>, <span class="at">col =</span> <span class="st">"skyblue"</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mofo<span class="sc">$</span>inc, <span class="at">main =</span> <span class="st">"Incidência"</span>, <span class="at">col =</span> <span class="st">"salmon"</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(mofo<span class="sc">$</span>scl <span class="sc">+</span> <span class="dv">1</span>), <span class="at">main =</span> <span class="st">"Log(Escleródios)"</span>, <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mofo <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados_diversos.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"mofo"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mofo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel" data-layout-nrow="1">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
-<p><img src="aula6_files/figure-html/histogramas-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
-<p><img src="aula6_files/figure-html/histogramas-2.png" class="img-fluid" width="672"></p>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
-<p><img src="aula6_files/figure-html/histogramas-3.png" class="img-fluid" width="672"></p>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 52
+Columns: 5
+$ study &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2…
+$ treat &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, …
+$ inc   &lt;dbl&gt; 76, 53, 42, 37, 29, 42, 55, 40, 26, 18, 27, 28, 36, 76, 44, 24, …
+$ scl   &lt;dbl&gt; 2194, 1663, 1313, 1177, 753, 1343, 1519, 516, 643, 400, 643, 921…
+$ yld   &lt;dbl&gt; 2265, 2618, 2554, 2632, 2820, 2799, 2503, 2967, 2965, 3088, 3044…</code></pre>
 </div>
 </div>
+<p>Aqui o interesse é estudar a associação entre variáveis quantitativas. Pelo código original, a relação explorada nos gráficos é entre <code>inc</code> e <code>scl</code>. Portanto, a análise de correlação foi alinhada a essas duas variáveis para manter coerência entre teste e visualização.</p>
+</section>
+<section id="visualização-geral-por-estudo" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-geral-por-estudo">Visualização geral por estudo</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mofo <span class="sc">|&gt;</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> inc, <span class="at">y =</span> scl, <span class="at">color =</span> <span class="fu">factor</span>(study))) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_colorblind</span>() <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Incidência"</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Escala / variável scl"</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Estudo"</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<hr>
-<blockquote class="blockquote">
-<p><strong>Conclusão:</strong> O fluxo de análise demonstra que a eficácia do fungicida pode depender da dose (interação) e que a produtividade no campo deve ser analisada considerando o efeito de blocos para reduzir o erro residual. A análise de correlação estratificada por estudo previne conclusões errôneas baseadas em dados agregados.</p>
-</blockquote>
+</div>
+</div>
+<p>O coeficiente de correlação de Pearson mede a intensidade e a direção da associação linear entre duas variáveis quantitativas:</p>
+<p><span class="math display">\[
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}
+{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2} \sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\]</span></p>
+<p>O valor de <span class="math inline">\(r\)</span> varia entre -1 e 1:</p>
+<ul>
+<li>valores próximos de 1 indicam associação linear positiva forte;</li>
+<li>valores próximos de -1 indicam associação linear negativa forte;</li>
+<li>valores próximos de 0 indicam associação linear fraca ou ausente.</li>
+</ul>
+</section>
+<section id="correlação-geral" class="level2">
+<h2 class="anchored" data-anchor-id="correlação-geral">Correlação geral</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(mofo<span class="sc">$</span>inc, mofo<span class="sc">$</span>scl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  mofo$inc and mofo$scl
+t = 5.4615, df = 50, p-value = 1.484e-06
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.4061148 0.7577627
+sample estimates:
+      cor 
+0.6112689 </code></pre>
+</div>
+</div>
+<p>O teste associado avalia a hipótese nula:</p>
+<p><span class="math display">\[
+H_0: \rho = 0
+\]</span></p>
+<p>contra a hipótese alternativa de que a correlação populacional difere de zero.</p>
+</section>
+<section id="correlações-por-estudo" class="level2">
+<h2 class="anchored" data-anchor-id="correlações-por-estudo">Correlações por estudo</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>correlacoes <span class="ot">&lt;-</span> mofo <span class="sc">|&gt;</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(study) <span class="sc">|&gt;</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(inc, scl, <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>correlacoes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  study     r
+  &lt;dbl&gt; &lt;dbl&gt;
+1     1 0.913
+2     2 0.849
+3     3 0.844
+4     4 0.927</code></pre>
+</div>
+</div>
+</section>
+<section id="inspeção-das-distribuições" class="level2">
+<h2 class="anchored" data-anchor-id="inspeção-das-distribuições">Inspeção das distribuições</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mofo<span class="sc">$</span>inc, <span class="at">main =</span> <span class="st">"Histograma de incidência"</span>, <span class="at">xlab =</span> <span class="st">"inc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mofo<span class="sc">$</span>scl, <span class="at">main =</span> <span class="st">"Histograma de scl"</span>, <span class="at">xlab =</span> <span class="st">"scl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A inspeção visual das distribuições é útil porque correlação de Pearson e regressão linear simples assumem, em termos de interpretação inferencial, relação aproximadamente linear e ausência de distorções severas causadas por valores extremos.</p>
+</section>
+<section id="gráfico-final-com-coeficientes-por-estudo" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-final-com-coeficientes-por-estudo">Gráfico final com coeficientes por estudo</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>label_data <span class="ot">&lt;-</span> mofo <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(study) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_pos =</span> <span class="fu">max</span>(inc, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y_pos =</span> <span class="fu">predict</span>(</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">lm</span>(scl <span class="sc">~</span> inc, <span class="at">data =</span> <span class="fu">cur_data</span>()),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">inc =</span> <span class="fu">max</span>(inc, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(correlacoes, <span class="at">by =</span> <span class="st">"study"</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>mofo <span class="sc">|&gt;</span> </span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> inc, <span class="at">y =</span> scl, <span class="at">color =</span> <span class="fu">factor</span>(study))) <span class="sc">+</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> label_data,</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> x_pos, <span class="at">y =</span> y_pos, <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"r = "</span>, <span class="fu">format</span>(<span class="fu">round</span>(r, <span class="dv">2</span>), <span class="at">nsmall =</span> <span class="dv">2</span>))),</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>,</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="fl">0.5</span>,</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontface =</span> <span class="st">"italic"</span>,</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_colorblind</span>() <span class="sc">+</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>))) <span class="sc">+</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>)</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Incidência da doença (%)"</span>,</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"scl"</span>,</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Estudo"</span></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula6_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esse gráfico reúne três elementos importantes:</p>
+<ol type="1">
+<li><strong>dados observados</strong>, representados pelos pontos;</li>
+<li><strong>tendência linear ajustada</strong>, representada pelas retas;</li>
+<li><strong>coeficiente de correlação por estudo</strong>, indicado ao final de cada reta.</li>
+</ol>
+<p>Essa abordagem é útil quando se deseja mostrar que a associação pode variar entre estudos, experimentos ou ambientes.</p>
+</section>
+</section>
+<section id="síntese-conceitual-da-aula" class="level1">
+<h1>Síntese conceitual da aula</h1>
+<p>Nesta aula, três ideias estatísticas centrais foram trabalhadas.</p>
+<section id="interação-em-experimentos-fatoriais" class="level2">
+<h2 class="anchored" data-anchor-id="interação-em-experimentos-fatoriais">1. Interação em experimentos fatoriais</h2>
+<p>Quando há interação, o efeito de um fator depende do nível do outro. Nessa situação, a interpretação deve se concentrar em comparações dentro de cada combinação relevante.</p>
+</section>
+<section id="uso-de-blocos-para-ganhar-precisão" class="level2">
+<h2 class="anchored" data-anchor-id="uso-de-blocos-para-ganhar-precisão">2. Uso de blocos para ganhar precisão</h2>
+<p>O bloco não é o foco biológico principal, mas uma ferramenta de controle experimental. Seu papel é reduzir a variabilidade residual e melhorar a sensibilidade do teste para detectar diferenças entre tratamentos.</p>
+</section>
+<section id="correlação-não-implica-causalidade" class="level2">
+<h2 class="anchored" data-anchor-id="correlação-não-implica-causalidade">3. Correlação não implica causalidade</h2>
+<p>Mesmo quando a correlação é alta, isso indica associação estatística, e não necessariamente uma relação causal. A interpretação deve sempre considerar o contexto biológico e experimental.</p>
 
 
 </section>
