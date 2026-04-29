@@ -3,9 +3,9 @@ project:
   output-dir: docs  # ESSENCIAL: diz para o site ser criado aqui
 
 website:
-  title: "website"
+  title: "website FIP 606"
   navbar:
-    left:
+     left:
       - href: aula1Q.qmd
         text: Aula1
       - href: aula2.qmd
@@ -20,7 +20,6 @@ website:
         text: Aula 06
       - href: aula7.qmd
         text: Aula 07
-      - about.qmd
 
 format:
   html:
