@@ -2,9 +2,23 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Aulas da disciplina FIP 606 - ANÁLISE E VISUALIZAÇÃO DE DADOS EM FITOPATOLOGIA",
+    "title": "FIP 606",
     "section": "",
-    "text": "Site organizado por Antoniel Pereira"
+    "text": "Este site reúne os conteúdos da disciplina FIP 606, com foco em análise e visualização de dados aplicados à fitopatologia."
+  },
+  {
+    "objectID": "index.html#bem-vindo",
+    "href": "index.html#bem-vindo",
+    "title": "FIP 606",
+    "section": "",
+    "text": "Este site reúne os conteúdos da disciplina FIP 606, com foco em análise e visualização de dados aplicados à fitopatologia."
+  },
+  {
+    "objectID": "index.html#aulas",
+    "href": "index.html#aulas",
+    "title": "FIP 606",
+    "section": "Aulas",
+    "text": "Aulas\n\n\nAula 01\nIntrodução à análise de dados\n🔗 Acessar\n\n\nAula 02\nGráficos\n🔗 Acessar\n\n\nAula 03\nAnálise Multianual de Produtividade\n🔗 Acessar\n\n\nAula 04\nComparação de médias, teste t, testes não paramétricos e ANOVA\n🔗 Acessar\n\n\nAula 05\nANOVA, Diagnóstico de Pressupostos, Kruskal-Wallis e GLM de Poisson\n🔗 Acessar\n\n\nAula 06\nANOVA fatorial, blocos e correlação\n🔗 Acessar\n\n\nAula 07\nDiferença de ANOVA clássica e LMM - Comparações múltiplas\n🔗 Acessar\n\n\nAula 08\nAnálise de Regressão e Modelos Mistos\n🔗 Acessar"
   },
   {
     "objectID": "aula6.html",

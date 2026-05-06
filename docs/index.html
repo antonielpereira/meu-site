@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aulas da disciplina FIP 606 - ANÁLISE E VISUALIZAÇÃO DE DADOS EM FITOPATOLOGIA – website FIP 606</title>
+<title>FIP 606 – FIP 606 | Análise de Dados em Fitopatologia</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -41,7 +41,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a0f9fd0d421825b736dc1bbcbcba2219.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-438d1847d4ebb52a8b619e042d52009f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,9 +69,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -82,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">website FIP 606</span>
+    <span class="navbar-title">FIP 606 | Análise de Dados em Fitopatologia</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -92,36 +92,40 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./aula1Q.html"> 
-<span class="menu-text">Aula 01</span></a>
+<span class="menu-text">Introdução</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula2.html"> 
-<span class="menu-text">Aula 02</span></a>
+<span class="menu-text">Gráficos</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula3.html"> 
-<span class="menu-text">Aula 03</span></a>
+<span class="menu-text">Análise Multianual de Produtividade</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula4.html"> 
-<span class="menu-text">Aula 04</span></a>
+<span class="menu-text">Comparação de médias, teste t, testes não paramétricos e ANOVA</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula5.html"> 
-<span class="menu-text">Aula 05</span></a>
+<span class="menu-text">ANOVA, Diagnóstico de Pressupostos, Kruskal-Wallis e GLM de Poisson</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula6.html"> 
-<span class="menu-text">Aula 06</span></a>
+<span class="menu-text">ANOVA fatorial, blocos e correlação</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula7.html"> 
-<span class="menu-text">Aula 07</span></a>
+<span class="menu-text">Diferença de ANOVA clássica e LMM - Comparações múltiplas</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aula08.html"> 
-<span class="menu-text">Aula 08</span></a>
+<span class="menu-text">Análise de Regressão e Modelos Mistos</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -138,7 +142,8 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
   <ul>
-  <li><a href="#site-organizado-por-antoniel-pereira" id="toc-site-organizado-por-antoniel-pereira" class="nav-link active" data-scroll-target="#site-organizado-por-antoniel-pereira"><strong>Site organizado por Antoniel Pereira</strong></a></li>
+  <li><a href="#bem-vindo" id="toc-bem-vindo" class="nav-link active" data-scroll-target="#bem-vindo">👋 Bem-vindo</a></li>
+  <li><a href="#aulas" id="toc-aulas" class="nav-link" data-scroll-target="#aulas">Aulas</a></li>
   </ul>
 </nav>
     </div>
@@ -148,17 +153,65 @@ ul.task-list li input[type="checkbox"] {
   round " style="height: 15em; width: 15em;">
  <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Aulas da disciplina FIP 606 - ANÁLISE E VISUALIZAÇÃO DE DADOS EM FITOPATOLOGIA</h1>
-<p class="subtitle lead">Organização das aulas para apresentação em website</p>
+<h1 class="title">FIP 606</h1>
+<p class="subtitle lead">Análise e Visualização de Dados em Fitopatologia</p>
 </div>
 <div class="quarto-title-meta">
   </div>
 </header><main class="content" id="quarto-document-content">
 
-<section id="site-organizado-por-antoniel-pereira" class="level3">
-<h3 data-anchor-id="site-organizado-por-antoniel-pereira"><strong>Site organizado por Antoniel Pereira</strong></h3>
+<section id="bem-vindo" class="level2">
+<h2 data-anchor-id="bem-vindo">👋 Bem-vindo</h2>
+<p>Este site reúne os conteúdos da disciplina <strong>FIP 606</strong>, com foco em análise e visualização de dados aplicados à fitopatologia.</p>
+<hr>
+</section>
+<section id="aulas" class="level2">
+<h2 data-anchor-id="aulas">Aulas</h2>
+<div class="grid">
+<section id="aula-01" class="level3 g-col-4">
+<h3 data-anchor-id="aula-01">Aula 01</h3>
+<p>Introdução à análise de dados</p>
+<p><a href="./aula1Q.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-02" class="level3 g-col-4">
+<h3 data-anchor-id="aula-02">Aula 02</h3>
+<p>Gráficos</p>
+<p><a href="./aula2.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-03" class="level3 g-col-4">
+<h3 data-anchor-id="aula-03">Aula 03</h3>
+<p>Análise Multianual de Produtividade</p>
+<p><a href="./aula3.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-04" class="level3 g-col-4">
+<h3 data-anchor-id="aula-04">Aula 04</h3>
+<p>Comparação de médias, teste t, testes não paramétricos e ANOVA</p>
+<p><a href="./aula4.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-05" class="level3 g-col-4">
+<h3 data-anchor-id="aula-05">Aula 05</h3>
+<p>ANOVA, Diagnóstico de Pressupostos, Kruskal-Wallis e GLM de Poisson</p>
+<p><a href="./aula5.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-06" class="level3 g-col-4">
+<h3 data-anchor-id="aula-06">Aula 06</h3>
+<p>ANOVA fatorial, blocos e correlação</p>
+<p><a href="./aula6.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-07" class="level3 g-col-4">
+<h3 data-anchor-id="aula-07">Aula 07</h3>
+<p>Diferença de ANOVA clássica e LMM - Comparações múltiplas</p>
+<p><a href="./aula7.html">🔗 Acessar</a></p>
+</section>
+<section id="aula-08" class="level3 g-col-4">
+<h3 data-anchor-id="aula-08">Aula 08</h3>
+<p>Análise de Regressão e Modelos Mistos</p>
+<p><a href="aula 08.qmd">🔗 Acessar</a></p>
+</section>
+<hr>
 
 
+</div>
 </section>
 </main> 
   <hr class="about-sep">
@@ -564,8 +617,22 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Desenvolvido por Antoniel Pereira</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
 
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

@@ -1,32 +1,42 @@
 project:
   type: website
-  output-dir: docs  # ESSENCIAL: diz para o site ser criado aqui
+  output-dir: docs
 
 website:
-  title: "website FIP 606"
+  title: "FIP 606 | Análise de Dados em Fitopatologia"
+  
   navbar:
-     left:
+    left:
+      - href: index.qmd
+        text: "Home"
       - href: aula1Q.qmd
-        text: "Aula 01"
+        text: "Introdução"
       - href: aula2.qmd
-        text: "Aula 02"
+        text: "Gráficos"
       - href: aula3.qmd
-        text: "Aula 03"
+        text: "Análise Multianual de Produtividade"
       - href: aula4.qmd
-        text: "Aula 04"
+        text: "Comparação de médias, teste t, testes não paramétricos e ANOVA"
       - href: aula5.qmd
-        text: "Aula 05"
+        text: "ANOVA, Diagnóstico de Pressupostos, Kruskal-Wallis e GLM de Poisson"
       - href: aula6.qmd
-        text: "Aula 06"
+        text: "ANOVA fatorial, blocos e correlação"
       - href: aula7.qmd
-        text: "Aula 07"
+        text: "Diferença de ANOVA clássica e LMM - Comparações múltiplas"
       - href: aula08.qmd
-        text: "Aula 08"
+        text: "Análise de Regressão e Modelos Mistos"
+
+  page-footer:
+    center: "Desenvolvido por Antoniel Pereira"
+
 format:
   html:
-    theme: cosmo
-    css: styles.css
+    theme: 
+      - cosmo
+      - styles.scss   # 👈 vamos evoluir pra SCSS
     toc: true
+    toc-location: right
+    smooth-scroll: true
+    code-copy: true
 
 editor: visual
-
