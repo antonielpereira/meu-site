@@ -7,25 +7,24 @@ website:
   navbar:
      left:
       - href: aula1Q.qmd
-        text: Aula 01
+        text: "Aula 01"
       - href: aula2.qmd
-        text: Aula 02
+        text: "Aula 02"
       - href: aula3.qmd
-        text: Aula 03
+        text: "Aula 03"
       - href: aula4.qmd
-        text: Aula 04
+        text: "Aula 04"
       - href: aula5.qmd
-        text: Aula 05
+        text: "Aula 05"
       - href: aula6.qmd
-        text: Aula 06
+        text: "Aula 06"
       - href: aula7.qmd
-        text: Aula 07
+        text: "Aula 07"
       - href: aula08.qmd
-        text: Aula 08
-
+        text: "Aula 08"
 format:
   html:
-    theme: lux
+    theme: cosmo
     css: styles.css
     toc: true
 
