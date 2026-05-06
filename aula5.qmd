@@ -76,34 +76,26 @@ A ANOVA de um fator testa a hipótese de que todas as médias populacionais dos 
 
 A hipótese nula é:
 
-$$
-H_0: \mu_A = \mu_B = \mu_C = \mu_D = \mu_E = \mu_F
-$$
+$$H_0: \mu_A = \mu_B = \mu_C = \mu_D = \mu_E = \mu_F$$
 
 A hipótese alternativa é:
 
-$$
-H_1: \text{pelo menos uma média difere das demais}
-$$
+$$H_1: \text{pelo menos uma média difere das demais}$$
 
 O modelo linear da ANOVA pode ser escrito como:
 
-$$
-Y_{ij} = \mu + \tau_i + \varepsilon_{ij}
-$$
+$$Y_{ij} = \mu + \tau_i + \varepsilon_{ij}$$
 
 em que:
 
--   $Y_{ij}$ é a observação $j$ no tratamento $i$;
--   $\mu$ é a média geral;
--   $\tau_i$ é o efeito do tratamento $i$;
--   $\varepsilon_{ij}$ é o erro aleatório associado à observação.
+- $Y_{ij}$ é a observação $j$ no tratamento $i$;
+- $\mu$ é a média geral;
+- $\tau_i$ é o efeito do tratamento $i$;
+- $\varepsilon_{ij}$ é o erro aleatório associado à observação.
 
 Assume-se que:
 
-$$
-\varepsilon_{ij} \sim N(0, \sigma^2)
-$$
+$$\varepsilon_{ij} \sim N(0, \sigma^2)$$
 
 ou seja, os erros são independentes, normalmente distribuídos e com variância comum.
 
@@ -111,31 +103,21 @@ ou seja, os erros são independentes, normalmente distribuídos e com variância
 
 A ANOVA particiona a soma de quadrados total em duas partes:
 
-$$
-SQ_{Total} = SQ_{Tratamentos} + SQ_{Resíduo}
-$$
+$$SQ_{Total} = SQ_{Tratamentos} + SQ_{Resíduo}$$
 
 ou, de forma equivalente,
 
-$$
-SS_T = SS_{Trat} + SS_E
-$$
+$$SS_T = SS_{Trat} + SS_E$$
 
 A estatística de teste é:
 
-$$
-F = \frac{QM_{Tratamentos}}{QM_{Resíduo}}
-$$
+$$F = \frac{QM_{Tratamentos}}{QM_{Resíduo}}$$
 
 em que:
 
-$$
-QM_{Tratamentos} = \frac{SQ_{Tratamentos}}{g - 1}
-$$
+$$QM_{Tratamentos} = \frac{SQ_{Tratamentos}}{g - 1}$$
 
-$$
-QM_{Resíduo} = \frac{SQ_{Resíduo}}{N - g}
-$$
+$$QM_{Resíduo} = \frac{SQ_{Resíduo}}{N - g}$$
 
 com $g$ representando o número de grupos e $N$ o número total de observações.
 
@@ -159,9 +141,7 @@ A interpretação da ANOVA depende da avaliação dos resíduos do modelo. Em te
 
 Os resíduos são calculados como:
 
-$$
-e_{ij} = y_{ij} - \hat{y}_{ij}
-$$
+$$e_{ij} = y_{ij} - \hat{y}_{ij}$$
 
 onde $y_{ij}$ é o valor observado e $\hat{y}_{ij}$ é o valor ajustado pelo modelo.
 
@@ -177,9 +157,7 @@ hist(m1$residuals,
 
 O teste de Shapiro-Wilk avalia a hipótese:
 
-$$
-H_0: \text{os resíduos seguem distribuição normal}
-$$
+$$H_0: \text{os resíduos seguem distribuição normal}$$
 
 ```{r}
 shapiro.test(m1$residuals)
@@ -189,9 +167,7 @@ shapiro.test(m1$residuals)
 
 O teste de Bartlett avalia:
 
-$$
-H_0: \sigma_A^2 = \sigma_B^2 = \cdots = \sigma_F^2
-$$
+$$H_0: \sigma_A^2 = \sigma_B^2 = \cdots = \sigma_F^2$$
 
 ```{r}
 bartlett.test(count ~ spray, data = insetos)
@@ -239,9 +215,7 @@ k
 
 Para dados de contagem, uma transformação simples e clássica é a raiz quadrada:
 
-$$
-Y' = \sqrt{Y}
-$$
+$$Y' = \sqrt{Y}$$
 
 Essa transformação pode reduzir assimetria e estabilizar a variância em algumas situações.
 
@@ -335,21 +309,15 @@ A resposta `count` é uma contagem. Em muitos casos, contagens são mais natural
 
 No modelo de Poisson, assume-se:
 
-$$
-Y_i \sim \text{Poisson}(\mu_i)
-$$
+$$Y_i \sim \text{Poisson}(\mu_i)$$
 
 com:
 
-$$
-P(Y_i = y_i) = \frac{e^{-\mu_i}\mu_i^{y_i}}{y_i!}
-$$
+$$P(Y_i = y_i) = \frac{e^{-\mu_i}\mu_i^{y_i}}{y_i!}$$
 
 Além disso, usa-se uma função de ligação logarítmica:
 
-$$
-\log(\mu_i) = \eta_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip}
-$$
+$$\log(\mu_i) = \eta_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip}$$
 
 No nosso caso, os preditores representam os tratamentos.
 
@@ -406,11 +374,11 @@ Em termos didáticos, a principal mensagem é que a escolha do método não deve
 
 # Conclusões
 
--   A ANOVA de um fator é uma ferramenta central para comparar médias entre grupos.
--   Sua interpretação depende de pressupostos sobre os erros do modelo.
--   O teste de Kruskal-Wallis oferece uma alternativa quando esses pressupostos falham.
--   Transformações podem melhorar o comportamento dos dados, mas não substituem o raciocínio estatístico.
--   Para contagens, o GLM com distribuição de Poisson costuma ser uma alternativa conceitualmente mais coerente.
+- A ANOVA de um fator é uma ferramenta central para comparar médias entre grupos.
+- Sua interpretação depende de pressupostos sobre os erros do modelo.
+- O teste de Kruskal-Wallis oferece uma alternativa quando esses pressupostos falham.
+- Transformações podem melhorar o comportamento dos dados, mas não substituem o raciocínio estatístico.
+- Para contagens, o GLM com distribuição de Poisson costuma ser uma alternativa conceitualmente mais coerente.
 
 # Sessão de pacotes
 

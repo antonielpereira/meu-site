@@ -1,6 +1,12 @@
 ---
-title: "aula7"
-format: html
+title: "Aula 07: Diferença de ANOVA classica e LMM - Comparações múltiplas"
+author: "Antoniel Pereira - 119012"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    code-fold: show
 editor: visual
 ---
 
@@ -40,11 +46,11 @@ milho
 
 Neste conjunto de dados, consideramos as seguintes variáveis:
 
--   `block`: bloco ou repetição do experimento;
--   `hybrid`: híbrido de milho;
--   `method`: método de inoculação;
--   `index`: índice de infecção;
--   `yield`: produtividade.
+- `block`: bloco ou repetição do experimento;
+- `hybrid`: híbrido de milho;
+- `method`: método de inoculação;
+- `index`: índice de infecção;
+- `yield`: produtividade.
 
 Antes de ajustar qualquer modelo, é recomendável garantir que as variáveis categóricas estejam armazenadas como fatores.
 
@@ -120,10 +126,10 @@ Embora a análise principal desta aula seja feita para `index`, a variável `yie
 
 Neste experimento, a estrutura estatística pode ser representada como um delineamento em **parcelas subdivididas**. Em termos práticos:
 
--   os blocos representam fontes de variação controladas no campo;
--   os híbridos são atribuídos às parcelas principais;
--   os métodos são avaliados dentro das parcelas principais, nas subparcelas;
--   a interação `hybrid:method` indica se o efeito do método depende do híbrido.
+- os blocos representam fontes de variação controladas no campo;
+- os híbridos são atribuídos às parcelas principais;
+- os métodos são avaliados dentro das parcelas principais, nas subparcelas;
+- a interação `hybrid:method` indica se o efeito do método depende do híbrido.
 
 A principal consequência estatística é que há dois níveis de erro:
 
@@ -132,32 +138,26 @@ A principal consequência estatística é que há dois níveis de erro:
 
 Uma forma didática de escrever o modelo é:
 
-$$
-y_{ijk} = \mu + B_i + H_j + (BH)_{ij} + M_k + (HM)_{jk} + \varepsilon_{ijk}
-$$
+$$y_{ijk} = \mu + B_i + H_j + (BH)_{ij} + M_k + (HM)_{jk} + \varepsilon_{ijk}$$
 
 em que:
 
--   $y_{ijk}$ é a observação no bloco $i$, híbrido $j$ e método $k$;
--   $\mu$ é a média geral;
--   $B_i$ é o efeito do bloco;
--   $H_j$ é o efeito do híbrido;
--   $(BH)_{ij}$ é o erro da parcela principal, isto é, híbrido dentro de bloco;
--   $M_k$ é o efeito do método;
--   $(HM)_{jk}$ é a interação híbrido × método;
--   $\varepsilon_{ijk}$ é o erro residual da subparcela.
+- $y_{ijk}$ é a observação no bloco $i$, híbrido $j$ e método $k$;
+- $\mu$ é a média geral;
+- $B_i$ é o efeito do bloco;
+- $H_j$ é o efeito do híbrido;
+- $(BH)_{ij}$ é o erro da parcela principal, isto é, híbrido dentro de bloco;
+- $M_k$ é o efeito do método;
+- $(HM)_{jk}$ é a interação híbrido × método;
+- $\varepsilon_{ijk}$ é o erro residual da subparcela.
 
 Em modelos mistos, geralmente tratamos bloco e parcela principal dentro de bloco como efeitos aleatórios:
 
-$$
-y_{ijk} = \mu + H_j + M_k + (HM)_{jk} + b_i + p_{ij} + \varepsilon_{ijk}
-$$
+$$y_{ijk} = \mu + H_j + M_k + (HM)_{jk} + b_i + p_{ij} + \varepsilon_{ijk}$$
 
 com:
 
-$$
-b_i \sim N(0, \sigma_b^2), \qquad p_{ij} \sim N(0, \sigma_p^2), \qquad \varepsilon_{ijk} \sim N(0, \sigma^2)
-$$
+$$b_i \sim N(0, \sigma_b^2), \qquad p_{ij} \sim N(0, \sigma_p^2), \qquad \varepsilon_{ijk} \sim N(0, \sigma^2)$$
 
 Essa formulação explicita que existem componentes de variância diferentes para blocos, parcelas principais e subparcelas.
 
@@ -179,9 +179,9 @@ hybrid + method + hybrid:method
 
 Portanto, o modelo testa:
 
--   efeito principal de híbrido;
--   efeito principal de método;
--   interação híbrido × método.
+- efeito principal de híbrido;
+- efeito principal de método;
+- interação híbrido × método.
 
 Em parcelas subdivididas, o teste para híbrido deve usar o erro da parcela principal. O teste para método e para a interação híbrido × método usa o erro da subparcela. Esse é o motivo pelo qual o modelo apresenta mais de um estrato de erro.
 
@@ -210,13 +210,9 @@ head(residuos)
 
 O teste de Shapiro-Wilk avalia a hipótese nula de que os resíduos seguem uma distribuição normal.
 
-$$
-H_0: \text{os resíduos seguem distribuição normal}
-$$
+$$H_0: \text{os resíduos seguem distribuição normal}$$
 
-$$
-H_A: \text{os resíduos não seguem distribuição normal}
-$$
+$$H_A: \text{os resíduos não seguem distribuição normal}$$
 
 ```{r}
 shapiro.test(residuos)
@@ -249,9 +245,7 @@ leveneTest(index ~ hybrid * method, data = milho)
 
 A hipótese nula é:
 
-$$
-H_0: \sigma_1^2 = \sigma_2^2 = \cdots = \sigma_g^2
-$$
+$$H_0: \sigma_1^2 = \sigma_2^2 = \cdots = \sigma_g^2$$
 
 em que $g$ é o número de combinações entre híbridos e métodos.
 
@@ -270,9 +264,9 @@ modelo_misto <- lmer(
 
 A especificação pode ser lida assim:
 
--   `index ~ hybrid * method`: efeitos fixos de híbrido, método e interação;
--   `(1 | block)`: intercepto aleatório para bloco;
--   `(1 | block:hybrid)`: intercepto aleatório para a parcela principal, isto é, cada combinação bloco × híbrido.
+- `index ~ hybrid * method`: efeitos fixos de híbrido, método e interação;
+- `(1 | block)`: intercepto aleatório para bloco;
+- `(1 | block:hybrid)`: intercepto aleatório para a parcela principal, isto é, cada combinação bloco × híbrido.
 
 Esse modelo reconhece que observações dentro da mesma parcela principal tendem a ser mais semelhantes entre si do que observações de parcelas diferentes.
 
@@ -298,9 +292,9 @@ summary(modelo_misto)
 
 O resumo do modelo mostra os componentes de variância dos efeitos aleatórios. Esses componentes indicam quanto da variação total é atribuída a:
 
--   diferenças entre blocos;
--   diferenças entre parcelas principais dentro de blocos;
--   variação residual entre subparcelas.
+- diferenças entre blocos;
+- diferenças entre parcelas principais dentro de blocos;
+- variação residual entre subparcelas.
 
 # Diagnóstico com resíduos simulados
 
@@ -313,10 +307,10 @@ plot(res_sim)
 
 Os gráficos ajudam a avaliar:
 
--   desvios globais da distribuição esperada dos resíduos;
--   padrões entre resíduos e valores preditos;
--   possíveis valores extremos;
--   heterogeneidade de variância.
+- desvios globais da distribuição esperada dos resíduos;
+- padrões entre resíduos e valores preditos;
+- possíveis valores extremos;
+- heterogeneidade de variância.
 
 Em modelos lineares gaussianos simples, gráficos clássicos de resíduos também são úteis. Em modelos mistos, o diagnóstico por simulação fornece uma verificação adicional.
 
@@ -362,8 +356,8 @@ As letras de agrupamento são uma forma compacta de apresentar comparações mú
 
 Neste material, usaremos a seguinte convenção:
 
--   letras minúsculas comparam híbridos dentro de cada método;
--   letras maiúsculas comparam métodos dentro de cada híbrido.
+- letras minúsculas comparam híbridos dentro de cada método;
+- letras maiúsculas comparam métodos dentro de cada híbrido.
 
 ## Letras para híbridos dentro de método
 
@@ -472,8 +466,8 @@ ggplot(df_grafico, aes(x = hybrid, y = emmean, fill = method)) +
 
 No gráfico, as barras representam as médias ajustadas pelo modelo misto. As barras de erro representam $\pm 1$ erro padrão. As letras devem ser interpretadas de acordo com o contexto da comparação:
 
--   letras minúsculas: comparação entre híbridos dentro do mesmo método;
--   letras maiúsculas: comparação entre métodos dentro do mesmo híbrido.
+- letras minúsculas: comparação entre híbridos dentro do mesmo método;
+- letras maiúsculas: comparação entre métodos dentro do mesmo híbrido.
 
 # Interpretação estatística
 

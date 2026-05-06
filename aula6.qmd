@@ -1,5 +1,5 @@
 ---
-title: "Aula 06 - Análise Fitopatológica: Eficácia de Fungicidas e Produtividade"
+title: "Aula 06 - ANOVA fatorial, blocos e correlação"
 author: "Antoniel Pereira"
 date: "`r Sys.Date()`"
 format: 

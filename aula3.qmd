@@ -214,6 +214,6 @@ ggplotly(p_brasil, tooltip = "text")
 
 ### Notas de Execução:
 
--   **Camadas do GGPlot**: Lembre-se que o `geom_sf()` deve vir antes do `geom_point()` para que o mapa sirva de fundo e não cubra os pontos.
--   **Dica de Pipe**: Utilize `|>` ou `%>%` para manter o código limpo. O `|>` é o pipe nativo do R (mais moderno).
--   **Interatividade**: O `ggplotly()` é ótimo para exploração, mas lembre-se de que ele não funciona em arquivos PDF, apenas em formatos HTML.
+- **Camadas do GGPlot**: Lembre-se que o `geom_sf()` deve vir antes do `geom_point()` para que o mapa sirva de fundo e não cubra os pontos.
+- **Dica de Pipe**: Utilize `|>` ou `%>%` para manter o código limpo. O `|>` é o pipe nativo do R (mais moderno).
+- **Interatividade**: O `ggplotly()` é ótimo para exploração, mas lembre-se de que ele não funciona em arquivos PDF, apenas em formatos HTML.

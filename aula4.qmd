@@ -205,8 +205,8 @@ ggplot(medias_m1b, aes(x = reorder(especie, emmean), y = emmean, label = .group)
 
 4.  **Correções de Sintaxe**:
 
-    -   Corrigi o termo `outliner.color` para `outlier.shape = NA` ou `outlier.color = NA` (o nome correto é outlier).
-    -   Adicionei o cálculo de `lower.CL` e `upper.CL` no gráfico final para as barras de erro fazerem sentido.
+    - Corrigi o termo `outliner.color` para `outlier.shape = NA` ou `outlier.color = NA` (o nome correto é outlier).
+    - Adicionei o cálculo de `lower.CL` e `upper.CL` no gráfico final para as barras de erro fazerem sentido.
 
 5.  **Letras de Tukey**: Utilizei o pacote `emmeans` integrado ao `cld` para gerar as letras automáticas, que é a forma mais moderna de apresentar esses dados.
 
@@ -284,15 +284,13 @@ Em estudos epidemiológicos, muitas vezes desejamos resumir toda a curva de prog
 
 A fórmula geral da AUDPC, pelo método dos trapézios, é:
 
-$$
-AUDPC = \sum_{i=1}^{n-1} \left( \frac{y_i + y_{i+1}}{2} \right)(t_{i+1} - t_i)
-$$
+$$AUDPC = \sum_{i=1}^{n-1} \left( \frac{y_i + y_{i+1}}{2} \right)(t_{i+1} - t_i)$$
 
 em que:
 
--   $y_i$ e $y_{i+1}$ são as severidades observadas em duas avaliações consecutivas;
--   $t_i$ e $t_{i+1}$ são os tempos correspondentes;
--   $n$ é o número de avaliações.
+- $y_i$ e $y_{i+1}$ são as severidades observadas em duas avaliações consecutivas;
+- $t_i$ e $t_{i+1}$ são os tempos correspondentes;
+- $n$ é o número de avaliações.
 
 Essa estatística resume a intensidade da doença ao longo do tempo. Quanto maior a AUDPC, maior a quantidade acumulada de doença no período avaliado.
 
@@ -345,14 +343,12 @@ resumo_audpc |>
 
 O erro-padrão da média é dado por:
 
-$$
-EP(\bar{x}) = \frac{s}{\sqrt{n}}
-$$
+$$EP(\bar{x}) = \frac{s}{\sqrt{n}}$$
 
 em que:
 
--   $s$ é o desvio-padrão amostral;
--   $n$ é o tamanho da amostra.
+- $s$ é o desvio-padrão amostral;
+- $n$ é o tamanho da amostra.
 
 ```{r}
 resumo_audpc |>
@@ -370,9 +366,7 @@ resumo_audpc |>
 
 O intervalo de confiança para a média pode ser escrito como:
 
-$$
-\bar{x} \pm t_{\alpha/2,\, n-1} \times \frac{s}{\sqrt{n}}
-$$
+$$\bar{x} \pm t_{\alpha/2,\, n-1} \times \frac{s}{\sqrt{n}}$$
 
 em que $t_{\alpha/2,\, n-1}$ é o quantil da distribuição *t* de Student com $n-1$ graus de liberdade.
 
@@ -402,13 +396,9 @@ Neste caso, vamos comparar a AUDPC entre os dois tratamentos de irrigação.
 
 As hipóteses do teste são:
 
-$$
-H_0: \mu_1 = \mu_2
-$$
+$$H_0: \mu_1 = \mu_2$$
 
-$$
-H_1: \mu_1 \neq \mu_2
-$$
+$$H_1: \mu_1 \neq \mu_2$$
 
 ou seja, a hipótese nula afirma que as médias populacionais são iguais, enquanto a hipótese alternativa afirma que elas diferem.
 
@@ -416,15 +406,13 @@ ou seja, a hipótese nula afirma que as médias populacionais são iguais, enqua
 
 Quando as variâncias são assumidas como diferentes, usa-se a versão de Welch do teste *t*, cuja estatística é:
 
-$$
-t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}
-$$
+$$t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
 
 em que:
 
--   $\bar{x}_1$ e $\bar{x}_2$ são as médias amostrais;
--   $s_1^2$ e $s_2^2$ são as variâncias amostrais;
--   $n_1$ e $n_2$ são os tamanhos amostrais.
+- $\bar{x}_1$ e $\bar{x}_2$ são as médias amostrais;
+- $s_1^2$ e $s_2^2$ são as variâncias amostrais;
+- $n_1$ e $n_2$ são os tamanhos amostrais.
 
 ## Aplicação em R
 
@@ -437,11 +425,11 @@ teste_t_audpc
 
 O objeto retornado informa:
 
--   a estatística *t*;
--   os graus de liberdade;
--   o valor de *p*;
--   o intervalo de confiança para a diferença entre médias;
--   as médias estimadas em cada grupo.
+- a estatística *t*;
+- os graus de liberdade;
+- o valor de *p*;
+- o intervalo de confiança para a diferença entre médias;
+- as médias estimadas em cada grupo.
 
 Se o valor de *p* for menor que o nível de significância adotado, rejeitamos $H_0$ e concluímos que há evidência de diferença entre as médias.
 
@@ -492,31 +480,23 @@ escala_wide
 
 No teste pareado, o interesse recai sobre a diferença entre as duas medidas do mesmo indivíduo:
 
-$$
-d_i = x_{i1} - x_{i2}
-$$
+$$d_i = x_{i1} - x_{i2}$$
 
 O teste é então realizado sobre a média das diferenças:
 
-$$
-H_0: \mu_d = 0
-$$
+$$H_0: \mu_d = 0$$
 
-$$
-H_1: \mu_d \neq 0
-$$
+$$H_1: \mu_d \neq 0$$
 
 A estatística do teste é:
 
-$$
-t = \frac{\bar{d}}{s_d / \sqrt{n}}
-$$
+$$t = \frac{\bar{d}}{s_d / \sqrt{n}}$$
 
 em que:
 
--   $\bar{d}$ é a média das diferenças;
--   $s_d$ é o desvio-padrão das diferenças;
--   $n$ é o número de pares.
+- $\bar{d}$ é a média das diferenças;
+- $s_d$ é o desvio-padrão das diferenças;
+- $n$ é o número de pares.
 
 ## Aplicação do teste *t* pareado
 
@@ -570,13 +550,9 @@ Esse teste não compara médias, mas sim a tendência central das diferenças, c
 
 As hipóteses continuam sendo, em essência:
 
-$$
-H_0: \text{a distribuição das diferenças é centrada em zero}
-$$
+$$H_0: \text{a distribuição das diferenças é centrada em zero}$$
 
-$$
-H_1: \text{a distribuição das diferenças não é centrada em zero}
-$$
+$$H_1: \text{a distribuição das diferenças não é centrada em zero}$$
 
 ```{r}
 teste_wilcox <- wilcox.test(
@@ -627,32 +603,24 @@ micelial |>
 
 O modelo clássico de ANOVA de um fator pode ser escrito como:
 
-$$
-Y_{ij} = \mu + \tau_i + \varepsilon_{ij}
-$$
+$$Y_{ij} = \mu + \tau_i + \varepsilon_{ij}$$
 
 em que:
 
--   $Y_{ij}$ é a observação da unidade $j$ no grupo $i$;
--   $\mu$ é a média geral;
--   $\tau_i$ é o efeito do grupo $i$;
--   $\varepsilon_{ij}$ é o erro aleatório, assumido com distribuição normal, média zero e variância constante.
+- $Y_{ij}$ é a observação da unidade $j$ no grupo $i$;
+- $\mu$ é a média geral;
+- $\tau_i$ é o efeito do grupo $i$;
+- $\varepsilon_{ij}$ é o erro aleatório, assumido com distribuição normal, média zero e variância constante.
 
 As hipóteses são:
 
-$$
-H_0: \mu_1 = \mu_2 = \cdots = \mu_k
-$$
+$$H_0: \mu_1 = \mu_2 = \cdots = \mu_k$$
 
-$$
-H_1: \text{pelo menos uma média difere das demais}
-$$
+$$H_1: \text{pelo menos uma média difere das demais}$$
 
 A estatística de teste é a razão entre o quadrado médio entre grupos e o quadrado médio residual:
 
-$$
-F = \frac{QM_{trat}}{QM_{res}}
-$$
+$$F = \frac{QM_{trat}}{QM_{res}}$$
 
 Valores altos de $F$ indicam maior evidência contra a hipótese nula.
 
@@ -687,9 +655,7 @@ shapiro.test(m1$residuals)
 
 O teste de Bartlett avalia a hipótese de igualdade das variâncias entre grupos:
 
-$$
-H_0: \sigma_1^2 = \sigma_2^2 = \cdots = \sigma_k^2
-$$
+$$H_0: \sigma_1^2 = \sigma_2^2 = \cdots = \sigma_k^2$$
 
 ```{r}
 bartlett.test(tcm ~ especie, data = micelial)
@@ -757,28 +723,28 @@ medias_m1b |>
 
 Usado para comparar a média de dois grupos independentes.
 
--   Unidade analítica em cada grupo é diferente.
--   Exemplo desta aula: comparação da AUDPC entre tratamentos de irrigação.
+- Unidade analítica em cada grupo é diferente.
+- Exemplo desta aula: comparação da AUDPC entre tratamentos de irrigação.
 
 ## 2. Teste *t* pareado
 
 Usado quando as duas medidas vêm dos mesmos indivíduos ou de unidades emparelhadas.
 
--   O teste é realizado sobre as diferenças entre pares.
--   Exemplo desta aula: comparação da acurácia dos mesmos avaliadores sob duas condições.
+- O teste é realizado sobre as diferenças entre pares.
+- Exemplo desta aula: comparação da acurácia dos mesmos avaliadores sob duas condições.
 
 ## 3. Teste de Wilcoxon pareado
 
 Alternativa não paramétrica ao teste *t* pareado.
 
--   Útil quando a distribuição das diferenças é muito assimétrica ou quando há clara violação da normalidade.
+- Útil quando a distribuição das diferenças é muito assimétrica ou quando há clara violação da normalidade.
 
 ## 4. ANOVA
 
 Usada para comparar três ou mais médias simultaneamente.
 
--   Primeiro testa-se o efeito global.
--   Depois, se necessário, investigam-se comparações múltiplas.
+- Primeiro testa-se o efeito global.
+- Depois, se necessário, investigam-se comparações múltiplas.
 
 ## 5. `emmeans` e Tukey
 

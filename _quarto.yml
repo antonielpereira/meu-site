@@ -7,7 +7,7 @@ website:
   navbar:
      left:
       - href: aula1Q.qmd
-        text: Aula1
+        text: Aula 01
       - href: aula2.qmd
         text: Aula 02
       - href: aula3.qmd
@@ -20,10 +20,12 @@ website:
         text: Aula 06
       - href: aula7.qmd
         text: Aula 07
+      - href: aula08.qmd
+        text: Aula 08
 
 format:
   html:
-    theme: lux  # Teste mudar para flatly ou materia
+    theme: lux
     css: styles.css
     toc: true
 
